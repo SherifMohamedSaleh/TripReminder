@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "398041947718",
+    "firebase_url": "https://mobiletrip-1828.firebaseio.com",
+    "project_id": "mobiletrip-1828",
+    "storage_bucket": "mobiletrip-1828.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:398041947718:android:cf2c61b3e48c22e5",
+        "android_client_info": {
+          "package_name": "com.example.trip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "398041947718-rdt095tgrichd8oqtd6kgubdpkjuvgo6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtzMYtekgWM7L49yxYbsZmL2xTV_Ak3N0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
