@@ -1,4 +1,4 @@
-package com.example.trip;
+package com.example.trip.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                Intent intent = new Intent(this, TokaActivity.class);
+                Intent intent = new Intent(this, AddTripActivity.class);
                 startActivity(intent);
                 // ...
             } else {

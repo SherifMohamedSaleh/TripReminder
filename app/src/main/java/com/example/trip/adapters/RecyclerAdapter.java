@@ -1,10 +1,13 @@
-package com.example.trip;
+package com.example.trip.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.trip.R;
+import com.example.trip.models.TripData;
 
 import java.util.List;
 

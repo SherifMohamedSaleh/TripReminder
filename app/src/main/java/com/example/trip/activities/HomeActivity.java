@@ -1,9 +1,13 @@
-package com.example.trip;
+package com.example.trip.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import com.example.trip.R;
+import com.example.trip.adapters.RecyclerAdapter;
+import com.example.trip.models.TripData;
 
 import java.util.ArrayList;
 import java.util.Date;

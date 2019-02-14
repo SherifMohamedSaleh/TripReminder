@@ -1,4 +1,4 @@
-package com.example.trip;
+package com.example.trip.models;
 
 import java.util.Date;
 import java.util.HashMap;
