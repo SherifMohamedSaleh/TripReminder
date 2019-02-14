@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                Intent intent = new Intent(this, HomeActivity.class);
+                Intent intent = new Intent(this, TokaActivity.class);
                 startActivity(intent);
                 // ...
             } else {

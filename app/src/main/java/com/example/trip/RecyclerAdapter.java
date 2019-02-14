@@ -33,6 +33,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    @Override
     public int getItemCount() {
         return 0;
     }
