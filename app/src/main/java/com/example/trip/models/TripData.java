@@ -1,5 +1,8 @@
 package com.example.trip.models;
 
+import android.location.Location;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -9,9 +12,9 @@ public class TripData {
     private String tripName;
     private String startPoint;
     private String endPoint;
-    private Date date;
+    private LocalDate date;
 
-    public TripData(String tripName, String startPoint, String endPoint, Date date, int tripType) {
+    public TripData(String tripName, String startPoint, String endPoint, int tripType ) {
         this.tripName = tripName;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -43,11 +46,11 @@ public class TripData {
         this.endPoint = endPoint;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                Intent intent = new Intent(this, AddTripActivity.class);
+                Intent intent = new Intent(this, AllTripsActivity.class);
                 startActivity(intent);
                 // ...
             } else {
