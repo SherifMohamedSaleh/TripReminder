@@ -13,19 +13,17 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAS3ZgMGX9gi0wKl4in6JC-SP1ML1NxOQo " />
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAS3ZgMGX9gi0wKl4in6JC-SP1ML1NxOQo " />
+            android:value="AIzaSyCtzMYtekgWM7L49yxYbsZmL2xTV_Ak3N0" />
 
-        <activity android:name=".activities.AddTripActivity"></activity>
+        <activity android:name=".activities.AddTripActivity">
+
+        </activity>
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.MainActivity"></activity>
+        <activity android:name=".activities.TempNavActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
