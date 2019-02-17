@@ -10,16 +10,12 @@ import android.widget.Toast;
 
 import com.example.trip.R;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener;
-
-import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_CARDS;
 
 
 public class PlacesAutoCompleteFragment extends Fragment {
     private static final String TAG = "PlacesAutoCompleteFragm";
-    private static final String YOUR_MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private PlaceAutocompleteFragment autocompleteFragment;
 
     @Override
@@ -27,7 +23,7 @@ public class PlacesAutoCompleteFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         if (savedInstanceState == null) {
-            autocompleteFragment = PlaceAutocompleteFragment.newInstance(YOUR_MAPBOX_ACCESS_TOKEN, PlaceOptions.builder().build(MODE_CARDS));
+            //autocompleteFragment = PlaceAutocompleteFragment.newInstance(YOUR_MAPBOX_ACCESS_TOKEN, PlaceOptions.builder().build(MODE_CARDS));
             final FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fragment_container, autocompleteFragment, TAG);
             transaction.commit();
