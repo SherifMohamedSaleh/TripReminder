@@ -39,10 +39,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
 
     //maps
-    //implementation 'com.google.android.gms:play-services-places:16.0.0'
-    implementation 'com.google.android.libraries.places:places:1.0.0'
-
-
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v7:0.7.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

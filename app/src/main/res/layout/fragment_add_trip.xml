@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.AddTripActivity">
+    tools:context=".fragments.AddTripFragment">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -76,20 +76,67 @@
             android:background="@color/colorAccent"
             app:layout_constraintTop_toBottomOf="@+id/btn_trip_date" />
 
-        <AutoCompleteTextView
+        <TextView
+            android:id="@+id/tv_start_point_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/start_point"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_start_point"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_start_point" />
+
+        <TextView
+            android:id="@+id/tv_start_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_start_point"
+            app:layout_constraintStart_toEndOf="@+id/tv_start_point_label"
+            app:layout_constraintTop_toTopOf="@+id/btn_start_point" />
+
+        <TextView
+            android:id="@+id/tv_end_point_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/end_point"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_end_point"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_end_point" />
+
+        <TextView
             android:id="@+id/tv_end_point"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_end_point"
+            app:layout_constraintStart_toEndOf="@+id/tv_end_point_label"
+            app:layout_constraintTop_toTopOf="@+id/btn_end_point" />
+
+        <ImageButton
+            android:id="@+id/btn_end_point"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:contentDescription="@string/start_point"
             android:hint="@string/start_point"
-            app:layout_constraintTop_toBottomOf="@+id/tv_start_point" />
+            android:src="@android:drawable/ic_input_add"
+            app:layout_constraintStart_toEndOf="@+id/tv_end_point"
+            app:layout_constraintTop_toBottomOf="@+id/btn_start_point" />
 
-        <AutoCompleteTextView
-            android:id="@+id/tv_start_point"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/btn_start_point"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:hint="@string/end_point"
+            android:src="@android:drawable/ic_input_add"
+            app:layout_constraintStart_toEndOf="@+id/tv_start_point"
             app:layout_constraintTop_toBottomOf="@+id/view" />
 
         <View
@@ -98,7 +145,7 @@
             android:layout_height="1dp"
             android:alpha="0.3"
             android:background="@color/colorAccent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_end_point" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_end_point" />
 
         <TextView
             android:id="@+id/tv_trip_notes"
