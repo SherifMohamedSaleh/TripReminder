@@ -13,15 +13,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trip.R;
-import com.example.trip.models.TripData;
+import com.example.trip.models.Trip;
+import com.example.trip.models.Trip;
 
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ProductViewHolder> {
-    private List<TripData> tripDataList;
+    private List<Trip> tripDataList;
     private Context context;
 
-    public RecyclerAdapter(Context context ,List<TripData> tripDataList) {
+    public RecyclerAdapter(Context context ,List<Trip> tripDataList) {
         this.tripDataList = tripDataList;
         this.context = context ;
     }
@@ -30,19 +31,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.card_view_item, null);
+        View view = inflater.inflate(R.layout.card, null);
         return new ProductViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, final int position) {
 
-         TripData tripData = tripDataList.get(position);
+        Trip tripData = tripDataList.get(position);
         holder.textOne.setText(tripData.getTripName());
-        holder.textTwo.setText(tripData.getStartPoint());
-        holder.textThree.setText(tripData.getEndPoint());
+        holder.textTwo.setText("sat");
+        holder.textThree.setText("10:30");
        // holder.textFour.setText(tripData.getDate()+"");
-        holder.textFive.setText(tripData.getTripType()+"");
+     //   holder.textFive.setText(tripData.getTripType()+"");
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +77,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
             textTwo = itemView.findViewById(R.id.textTwo);
             textThree = itemView.findViewById(R.id.textThree);
        //     textFour = itemView.findViewById(R.id.textFour);
-            textFive = itemView.findViewById(R.id.textFive);
+         //   textFive = itemView.findViewById(R.id.textFive);
             cardView = (CardView) itemView.findViewById(R.id.cardview_id);
         }
     }

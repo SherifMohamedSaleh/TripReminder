@@ -9,7 +9,11 @@ import android.support.v7.widget.RecyclerView;
 
 import com.example.trip.R;
 import com.example.trip.adapters.RecyclerAdapter;
-import com.example.trip.models.TripData;
+import com.example.trip.models.Trip;
+import com.example.trip.models.TripDate;
+import com.example.trip.models.TripLocation;
+import com.example.trip.models.TripTime;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +22,13 @@ import java.util.List;
 public class AllTripsActivity extends AppCompatActivity {
 
     RecyclerView rv;
-    List<TripData> tripDataList = new ArrayList<>();
+    List<Trip> tripDataList = new ArrayList<>();
+    private ArrayList<String> notes;
+    TripLocation start ;
+    TripLocation end ;
+    TripDate date ;
+    TripTime time;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -29,13 +39,19 @@ public class AllTripsActivity extends AppCompatActivity {
         rv =(RecyclerView) findViewById(R.id.rv);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(this));
+        notes = new ArrayList<>();
+        start = new TripLocation();
+        end = new TripLocation();
+        date = new TripDate();
+        time = new TripTime();
 
 
 
-        tripDataList.add(new TripData("trip one", " alex", " cairo", 2    ));
-        tripDataList.add(new TripData("trip two", " alex", " cairo", 2 ));
-        tripDataList.add(new TripData("trip three", " alex", " cairo", 2 ));
-        tripDataList.add(new TripData("trip four", " alex", " cairo",  2 ));
+        tripDataList.add(new Trip( true ,notes,"trip one", start , end ,date , time  ));
+        tripDataList.add(new Trip( true ,notes,"trip two", start , end ,date , time ));
+        tripDataList.add(new Trip( true ,notes,"trip three", start , end ,date , time ));
+        tripDataList.add(new Trip( true ,notes,"trip four", start , end ,date , time));
+        tripDataList.add(new Trip( true ,notes,"trip five", start , end ,date , time));
 
 
         RecyclerAdapter adapter = new RecyclerAdapter(this ,tripDataList);
