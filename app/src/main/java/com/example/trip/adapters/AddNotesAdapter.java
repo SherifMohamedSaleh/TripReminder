@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.example.trip.R;
+import com.example.trip.models.Note;
 
 import java.util.ArrayList;
 
@@ -20,11 +21,11 @@ import java.util.ArrayList;
  */
 public class AddNotesAdapter extends RecyclerView.Adapter<AddNotesAdapter.ViewHolder> {
     private static final String TAG = "AddNotesAdapter";
-    private ArrayList<String> notesArrayList;
+    private ArrayList<Note> notesArrayList;
     private Context context;
 
-    public AddNotesAdapter(ArrayList<String> notesArrayList, Context context) {
-        this.notesArrayList = notesArrayList;
+    public AddNotesAdapter(ArrayList<Note> membersArrayList, Context context) {
+        this.notesArrayList = membersArrayList;
         this.context = context;
     }
 
@@ -41,12 +42,12 @@ public class AddNotesAdapter extends RecyclerView.Adapter<AddNotesAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         int i = holder.getLayoutPosition();
         Log.i(TAG, "onBindViewHolder " + notesArrayList.toString());
-        if (notesArrayList.get(i).length() > 0)
-            holder.noteEditText.setText(notesArrayList.get(i));
+        if (notesArrayList.get(i).getName().length() > 0)
+            holder.noteEditText.setText(notesArrayList.get(i).getName());
 
     }
 
-    public ArrayList<String> getNotesArrayList() {
+    public ArrayList<Note> getNotesArrayList() {
         return notesArrayList;
     }
 
@@ -87,7 +88,7 @@ public class AddNotesAdapter extends RecyclerView.Adapter<AddNotesAdapter.ViewHo
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    notesArrayList.set(getAdapterPosition(), s.toString());
+                    notesArrayList.set(getAdapterPosition(), new Note(s.toString(), notesArrayList.get(getAdapterPosition()).isChecked()));
                 }
 
                 @Override

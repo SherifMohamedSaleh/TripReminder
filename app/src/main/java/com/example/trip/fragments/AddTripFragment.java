@@ -24,6 +24,7 @@ import android.widget.TimePicker;
 
 import com.example.trip.R;
 import com.example.trip.adapters.AddNotesAdapter;
+import com.example.trip.models.Note;
 import com.example.trip.models.Trip;
 import com.example.trip.models.TripDate;
 import com.example.trip.models.TripLocation;
@@ -51,7 +52,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
     Switch isRoundedSwitch;
     Button doneButton;
 
-    ArrayList<String> notesArrayList;
+    ArrayList<Note> notesArrayList;
     AddNotesAdapter addNotesAdapter;
     LinearLayoutManager linearLayoutManager;
 
@@ -126,7 +127,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
             @Override
             public void onClick(View view) {
                 //TODO fix adding after deletion bug
-                notesArrayList.add("");
+                notesArrayList.add(new Note("", false));
                 Log.i(TAG, notesArrayList.toString());
                 addNotesAdapter.notifyDataSetChanged();
             }

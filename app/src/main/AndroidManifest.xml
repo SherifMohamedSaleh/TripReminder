@@ -15,14 +15,12 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCtzMYtekgWM7L49yxYbsZmL2xTV_Ak3N0" />
 
-        <activity android:name=".fragments.AddTripFragment">
-
-        </activity>
+        <activity android:name=".fragments.AddTripFragment"></activity>
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.MainActivity"></activity>
+        <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.TempNavActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.TempRoutingActivity"></activity>
     </application>
 
 </manifest>

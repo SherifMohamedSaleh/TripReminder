@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Trip {
     private boolean isRoundedTrip;
-    private ArrayList<String> notes;
+    private ArrayList<Note> notes;
     private String tripName;
     private TripLocation endPoint;
     private TripLocation startPoint;
@@ -15,19 +15,10 @@ public class Trip {
     public Trip() {
         isRoundedTrip = false;
         isFinished = false;
-
         notes = new ArrayList<>();
     }
 
-    public boolean isFinished() {
-        return isFinished;
-    }
-
-    public void setFinished(boolean finished) {
-        isFinished = finished;
-    }
-
-    public Trip(boolean isRoundedTrip, ArrayList<String> notes, String tripName, TripLocation endPoint, TripLocation startPoint, TripDate date, TripTime time) {
+    public Trip(boolean isRoundedTrip, ArrayList<Note> notes, String tripName, TripLocation endPoint, TripLocation startPoint, TripDate date, TripTime time) {
         this.isRoundedTrip = isRoundedTrip;
         this.notes = notes;
         this.tripName = tripName;
@@ -89,11 +80,19 @@ public class Trip {
         this.isRoundedTrip = isRoundedTrip;
     }
 
-    public ArrayList<String> getNotes() {
+    public ArrayList<Note> getNotes() {
         return notes;
     }
 
-    public void setNotes(ArrayList<String> notes) {
+    public void setNotes(ArrayList<Note> notes) {
         this.notes = notes;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
     }
 }
