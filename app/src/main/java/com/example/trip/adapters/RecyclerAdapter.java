@@ -7,15 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.trip.R;
-import com.example.trip.models.TripData;
+import com.example.trip.models.Trip;
 
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
-    private List<TripData> tripDataList;
+    private List<Trip> tripList;
 
-    public RecyclerAdapter(List<TripData> tripDataList) {
-        this.tripDataList = tripDataList;
+    public RecyclerAdapter(List<Trip> tripList) {
+        this.tripList = tripList;
     }
 
     @NonNull
@@ -27,12 +27,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        TripData tripData = tripDataList.get(i);
-        viewHolder.textOne.setText(tripData.getTripName());
-        viewHolder.textTwo.setText(tripData.getStartPoint());
-        viewHolder.textThree.setText(tripData.getEndPoint());
-        viewHolder.textFour.setText(tripData.getDate().toString());
-        viewHolder.textFive.setText(tripData.getTripType());
+        Trip trip = tripList.get(i);
+        viewHolder.textOne.setText(trip.getTripName());
+       /* viewHolder.textTwo.setText(trip.getStartAddress());
+        viewHolder.textThree.setText(trip.getEndAddress());
+        viewHolder.textFour.setText(trip.getDate().toString());
+        viewHolder.textFive.setText(trip.getIsRoundedTrip());*/
     }
 
     @Override

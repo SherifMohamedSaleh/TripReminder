@@ -15,14 +15,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.example.trip.R;
 import com.example.trip.adapters.AddNotesAdapter;
+import com.example.trip.models.Trip;
+import com.example.trip.models.TripDate;
+import com.example.trip.models.TripLocation;
+import com.example.trip.models.TripTime;
+import com.example.trip.utils.FirebaseReferences;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
@@ -32,7 +38,7 @@ import java.util.Calendar;
 
 import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_CARDS;
 
-public class AddTripFragment extends Fragment {
+public class AddTripFragment extends Fragment implements FirebaseReferences {
     private static final String TAG = "AddTripFragment";
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
@@ -42,11 +48,14 @@ public class AddTripFragment extends Fragment {
     ImageButton timeButton, dateButton, addNoteButton, addStartButton, addEndButton;
     RecyclerView notesRecyclerView;
     TextView startPointTextView, endPointTextView;
+    Switch isRoundedSwitch;
+    Button doneButton;
 
     ArrayList<String> notesArrayList;
     AddNotesAdapter addNotesAdapter;
     LinearLayoutManager linearLayoutManager;
 
+    Trip trip;
 
     @Nullable
     @Override
@@ -62,6 +71,8 @@ public class AddTripFragment extends Fragment {
         notesRecyclerView = rootView.findViewById(R.id.rv_notes);
         startPointTextView = rootView.findViewById(R.id.tv_start_point);
         endPointTextView = rootView.findViewById(R.id.tv_end_point);
+        isRoundedSwitch = rootView.findViewById(R.id.switch_rounded_trip);
+        doneButton = rootView.findViewById(R.id.btn_done);
 
         notesArrayList = new ArrayList<>();
         addNotesAdapter = new AddNotesAdapter(notesArrayList, getContext());
@@ -69,6 +80,8 @@ public class AddTripFragment extends Fragment {
         linearLayoutManager = new LinearLayoutManager(getContext());
         notesRecyclerView.setAdapter(addNotesAdapter);
         notesRecyclerView.setLayoutManager(linearLayoutManager);
+
+        trip = new Trip();
 
         final Calendar calender = Calendar.getInstance();
         final int hour = calender.get(Calendar.HOUR_OF_DAY);
@@ -84,6 +97,7 @@ public class AddTripFragment extends Fragment {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
                         Log.i(TAG, "hours: " + selectedHours + " minutes: " + selectedMinute);
+                        trip.setTime(new TripTime(selectedHours, selectedMinute));
                     }
 
                 }, hour, minute, false);
@@ -101,6 +115,7 @@ public class AddTripFragment extends Fragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                         Log.i(TAG, "i:" + year + " i1: " + month + " i2: " + day);
+                        trip.setDate(new TripDate(day, month, year));
                     }
                 }, year, month, day);
                 datePickerDialog.show();
@@ -139,6 +154,21 @@ public class AddTripFragment extends Fragment {
             }
         });
 
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (addNotesAdapter.getNotesArrayList() != null)
+                    trip.setNotes(addNotesAdapter.getNotesArrayList());
+
+                trip.setTripName(tripNameEditText.getText().toString());
+
+                trip.setRoundedTrip(isRoundedSwitch.isChecked());
+
+                String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
+                tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip);
+            }
+        });
+
         return rootView;
     }
 
@@ -147,12 +177,13 @@ public class AddTripFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_START_AUTOCOMPLETE) {
             CarmenFeature feature = PlaceAutocomplete.getPlace(data);
-            //Toast.makeText(getContext(), "start is: " + feature.text(), Toast.LENGTH_LONG).show();
             startPointTextView.setText(feature.text());
+            trip.setStartPoint(new TripLocation(feature.center().latitude(), feature.center().longitude(), feature.text()));
         } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_END_AUTOCOMPLETE) {
             CarmenFeature feature = PlaceAutocomplete.getPlace(data);
-            Toast.makeText(getContext(), "end is: " + feature.text(), Toast.LENGTH_LONG).show();
             endPointTextView.setText(feature.text());
+            trip.setEndPoint(new TripLocation(feature.center().latitude(), feature.center().longitude(), feature.text()));
+
         }
     }
 

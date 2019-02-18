@@ -23,8 +23,8 @@ public class AddNotesAdapter extends RecyclerView.Adapter<AddNotesAdapter.ViewHo
     private ArrayList<String> notesArrayList;
     private Context context;
 
-    public AddNotesAdapter(ArrayList<String> membersArrayList, Context context) {
-        this.notesArrayList = membersArrayList;
+    public AddNotesAdapter(ArrayList<String> notesArrayList, Context context) {
+        this.notesArrayList = notesArrayList;
         this.context = context;
     }
 

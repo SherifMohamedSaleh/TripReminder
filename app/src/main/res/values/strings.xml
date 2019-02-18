@@ -18,5 +18,6 @@
     <string name="trip_notes">Trip Notes</string>
     <string name="start_point">Start Point</string>
     <string name="end_point">End Point</string>
+    <string name="rounded_trip">Rounded Trip</string>
 
 </resources>
