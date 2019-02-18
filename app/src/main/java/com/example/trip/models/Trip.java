@@ -10,10 +10,21 @@ public class Trip {
     private TripLocation startPoint;
     private TripDate date;
     private TripTime time;
+    private boolean isFinished;
 
     public Trip() {
         isRoundedTrip = false;
+        isFinished = false;
+
         notes = new ArrayList<>();
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
     }
 
     public Trip(boolean isRoundedTrip, ArrayList<String> notes, String tripName, TripLocation endPoint, TripLocation startPoint, TripDate date, TripTime time) {
