@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -15,11 +14,11 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        app:cardBackgroundColor="@color/card"
+        android:background="?attr/selectableItemBackground"
         app:cardCornerRadius="20dp"
-        app:cardElevation="16dp"
         android:clickable="true"
-        android:background="?attr/selectableItemBackground">
+        app:cardBackgroundColor="@color/card"
+        app:cardElevation="16dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -53,9 +52,9 @@
                 android:layout_height="40dp"
                 android:layout_below="@id/textOne"
                 android:layout_alignParentStart="true"
+                android:layout_marginEnd="136dp"
                 android:layout_marginStart="68dp"
                 android:layout_marginTop="29dp"
-                android:layout_marginEnd="136dp"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textStyle="bold" />
 
@@ -73,13 +72,12 @@
                 android:id="@+id/textThree"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_below="@id/textOne"
                 android:layout_alignParentStart="true"
+                android:layout_below="@id/textOne"
                 android:layout_marginStart="213dp"
                 android:layout_marginTop="26dp"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textStyle="bold" />
-
 
 
         </RelativeLayout>

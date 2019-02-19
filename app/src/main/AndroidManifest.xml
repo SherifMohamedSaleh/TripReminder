@@ -3,6 +3,8 @@
     package="com.example.trip">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
 
     <application
         android:allowBackup="true"
@@ -11,13 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCtzMYtekgWM7L49yxYbsZmL2xTV_Ak3N0" />
-        <activity
-            android:name=".activities.HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.AllTripsActivity" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,10 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.TempNavActivity">
-
-        </activity>
-        <activity android:name=".activities.TempRoutingActivity"></activity>
+        <activity android:name=".activities.TempAddTripActivity"></activity>
+        <activity android:name=".activities.TempRoutingActivity" />
+        <activity android:name=".activities.TempGoogleNavigationAcitivy"></activity>
     </application>
 
 </manifest>

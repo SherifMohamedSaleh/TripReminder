@@ -7,13 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trip.R;
-import com.example.trip.models.Trip;
 import com.example.trip.models.Trip;
 
 import java.util.List;
@@ -22,9 +19,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
     private List<Trip> tripDataList;
     private Context context;
 
-    public RecyclerAdapter(Context context ,List<Trip> tripDataList) {
+    public RecyclerAdapter(Context context, List<Trip> tripDataList) {
         this.tripDataList = tripDataList;
-        this.context = context ;
+        this.context = context;
     }
 
     @NonNull
@@ -42,13 +39,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
         holder.textOne.setText(tripData.getTripName());
         holder.textTwo.setText("sat");
         holder.textThree.setText("10:30");
-       // holder.textFour.setText(tripData.getDate()+"");
-     //   holder.textFive.setText(tripData.getTripType()+"");
+        // holder.textFour.setText(tripData.getDate()+"");
+        //   holder.textFive.setText(tripData.getTripType()+"");
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(context, " hello to another screen  : item  "+position+"  selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, " hello to another screen  : item  " + position + "  selected", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -65,9 +62,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
 
     class ProductViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textOne, textTwo, textThree, textFour , textFive;
-        CardView cardView ;
-
+        TextView textOne, textTwo, textThree, textFour, textFive;
+        CardView cardView;
 
 
         public ProductViewHolder(View itemView) {
@@ -76,8 +72,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
             textOne = itemView.findViewById(R.id.textOne);
             textTwo = itemView.findViewById(R.id.textTwo);
             textThree = itemView.findViewById(R.id.textThree);
-       //     textFour = itemView.findViewById(R.id.textFour);
-         //   textFive = itemView.findViewById(R.id.textFive);
+            //     textFour = itemView.findViewById(R.id.textFour);
+            //   textFive = itemView.findViewById(R.id.textFive);
             cardView = (CardView) itemView.findViewById(R.id.cardview_id);
         }
     }

@@ -8,9 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.trip.R;
 import com.example.trip.fragments.AddTripFragment;
 
-public class TempNavActivity extends AppCompatActivity {
+public class TempAddTripActivity extends AppCompatActivity {
 
-    private static final String TAG = "TempNavActivity";
+    private static final String TAG = "TempAddTripActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

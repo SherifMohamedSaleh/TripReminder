@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.trip.R;
-import com.example.trip.fragments.AddTripFragment;
+import com.example.trip.fragments.RoutingFragment;
 
 public class TempRoutingActivity extends AppCompatActivity {
 
@@ -15,7 +15,7 @@ public class TempRoutingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp_routing);
 
-        AddTripFragment fragment = new AddTripFragment();
+        RoutingFragment fragment = new RoutingFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.activity_main, fragment);
