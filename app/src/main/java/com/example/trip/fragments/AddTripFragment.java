@@ -166,6 +166,9 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
                 trip.setRoundedTrip(isRoundedSwitch.isChecked());
 
                 String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
+
+                trip.setId(key);
+
                 tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip);
             }
         });
