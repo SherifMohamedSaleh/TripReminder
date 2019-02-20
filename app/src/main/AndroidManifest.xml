@@ -16,14 +16,16 @@
 
         <activity android:name=".activities.AllTripsActivity" />
         <activity android:name=".activities.MainActivity">
+
+        </activity>
+        <activity android:name=".activities.TempAddTripActivity"></activity>
+        <activity android:name=".activities.TempRoutingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.TempAddTripActivity"></activity>
-        <activity android:name=".activities.TempRoutingActivity" />
         <activity android:name=".activities.TempGoogleNavigationAcitivy"></activity>
     </application>
 

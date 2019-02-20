@@ -37,7 +37,7 @@ import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_CARDS;
+import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_FULLSCREEN;
 
 public class AddTripFragment extends Fragment implements FirebaseReferences {
     private static final String TAG = "AddTripFragment";
@@ -138,7 +138,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
             public void onClick(View view) {
                 Intent intent = new PlaceAutocomplete.IntentBuilder()
                         .accessToken(MAPBOX_ACCESS_TOKEN)
-                        .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
+                        .placeOptions(PlaceOptions.builder().build(MODE_FULLSCREEN))
                         .build(getActivity());
                 startActivityForResult(intent, REQUEST_CODE_START_AUTOCOMPLETE);
             }
@@ -149,7 +149,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
             public void onClick(View view) {
                 Intent intent = new PlaceAutocomplete.IntentBuilder()
                         .accessToken(MAPBOX_ACCESS_TOKEN)
-                        .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
+                        .placeOptions(PlaceOptions.builder().build(MODE_FULLSCREEN))
                         .build(getActivity());
                 startActivityForResult(intent, REQUEST_CODE_END_AUTOCOMPLETE);
             }
