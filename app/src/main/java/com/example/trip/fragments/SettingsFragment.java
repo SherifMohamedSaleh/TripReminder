@@ -1,4 +1,4 @@
-package com.example.trip.activities;
+package com.example.trip.fragments;
 
 
 import android.os.Bundle;

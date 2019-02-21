@@ -1,19 +1,22 @@
-package com.example.trip.activities;
+package com.example.trip.fragments;
 
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.trip.R;
+import com.example.trip.models.Note;
 import com.example.trip.models.Trip;
 import com.example.trip.models.TripDate;
 import com.example.trip.models.TripLocation;
@@ -52,21 +56,17 @@ public class TripFragment extends Fragment implements FirebaseReferences {
 
     EditText tripName,tripDate,tripTime,tripSource,tripDest,tripNotes;
     FloatingActionButton editTrip,startTrip,saveTrip;
-    ArrayList<String> notes;
+    Button notesBtn,roundedBtn;
     TextView tripStatus;
     CheckBox doneCheckBox;
     ImageView tripImage;
     Boolean editMode=false;
     Drawable draw;
-    Trip trip;
+    static Trip trip;
 
     public TripFragment() {
 
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+     //firebase trip
         trip=new Trip();
         TripDate d=new TripDate(1,29,2008);
         TripLocation l=new TripLocation(112,343,"Miami");
@@ -77,6 +77,12 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         trip.setEndPoint(l);
         trip.setStartPoint(l);
         trip.setTime(t);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
         View view=inflater.inflate(R.layout.fragment_trip, container, false);
         tripName=view.findViewById(R.id.tripNameVal);
         tripStatus=view.findViewById(R.id.tripStatusVal);
@@ -85,7 +91,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         tripSource=view.findViewById(R.id.tripSourceVal);
         tripDest=view.findViewById(R.id.tripDestVal);
         doneCheckBox=view.findViewById(R.id.doneCheckBox);
-        //   tripNotes=getView().findViewById(R.id.tripNotesVal);
+        notesBtn=view.findViewById(R.id.notesBtn);
+        roundedBtn=view.findViewById(R.id.startRoundBtn);
         editTrip=view.findViewById(R.id.editTripBtn);
         saveTrip=view.findViewById(R.id.saveTripBtn);
         startTrip=view.findViewById(R.id.startTripBtn);
@@ -107,16 +114,15 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             tripStatus.setText("Cancelled");
             doneCheckBox.setChecked(false);
         }
-        
+        if(trip.isRoundedTrip())
+        {
+            roundedBtn.setVisibility(View.VISIBLE);
+        }
         tripDate.setText(Integer.toString(trip.getDate().getDay())+"/"+Integer.toString(trip.getDate().getMonth())+"/"+Integer.toString(trip.getDate().getYear()));
         tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
         tripSource.setText("• "+trip.getStartPoint().getAddress());
         tripDest.setText("• "+trip.getEndPoint().getAddress());
-       // notes=trip.getNotes();
-//        for(int i=0;i<notes.size();i++)
-  //      {
-           // tripNotes.append("• "+notes.get(i)+"\n");
-    //    }
+
         editTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,21 +136,23 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 tripDate.setFocusable(true);
                 tripDate.setClickable(true);
                 tripDate.setFocusableInTouchMode(true);
+                tripDate.setBackgroundDrawable(draw);
                 tripTime.setFocusable(true);
                 tripTime.setClickable(true);
                 tripTime.setFocusableInTouchMode(true);
+                tripTime.setBackgroundDrawable(draw);
                 tripSource.setFocusable(true);
                 tripSource.setClickable(true);
                 tripSource.setFocusableInTouchMode(true);
+                tripSource.setBackgroundDrawable(draw);
                 tripDest.setClickable(true);
                 tripDest.setFocusable(true);
                 tripDest.setFocusableInTouchMode(true);
+                tripDest.setBackgroundDrawable(draw);
             }
         });
         if(editMode)
         {
-
-            trip.setTripName(tripName.getText().toString());
             startTrip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -205,18 +213,20 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 tripName.setBackground(null);
                 tripDate.setFocusable(false);
                 tripDate.setClickable(false);
+                tripDate.setBackground(null);
                 tripDate.setFocusableInTouchMode(false);
                 tripTime.setFocusable(false);
                 tripTime.setClickable(false);
+                tripTime.setBackground(null);
                 tripTime.setFocusableInTouchMode(false);
                 tripSource.setFocusable(false);
                 tripSource.setFocusable(false);
+                tripSource.setBackground(null);
                 tripSource.setFocusableInTouchMode(false);
                 tripDest.setClickable(false);
                 tripDest.setFocusable(false);
                 tripDest.setFocusableInTouchMode(false);
-                //   tripNotes.setFocusable(false);
-                //  tripNotes.setClickable(false);
+                tripDest.setBackground(null);
                 doneCheckBox.setFocusable(false);
                 doneCheckBox.setClickable(false);
         }
@@ -232,29 +242,41 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 tripName.setBackground(null);
                 tripDate.setFocusable(false);
                 tripDate.setClickable(false);
+                tripDate.setBackground(null);
                 tripDate.setFocusableInTouchMode(false);
                 tripTime.setFocusable(false);
                 tripTime.setClickable(false);
                 tripTime.setFocusableInTouchMode(false);
+                tripTime.setBackground(null);
                 tripSource.setFocusable(false);
                 tripSource.setFocusable(false);
                 tripSource.setFocusableInTouchMode(false);
+                tripSource.setBackground(null);
                 tripDest.setClickable(false);
                 tripDest.setFocusable(false);
                 tripDest.setFocusableInTouchMode(false);
-                //   tripNotes.setFocusable(false);
-                //  tripNotes.setClickable(false);
+                tripDest.setBackground(null);
                 doneCheckBox.setFocusable(false);
                 doneCheckBox.setClickable(false);
-
-
+                trip.setTripName(tripName.getText().toString());
                 String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
-
                 trip.setId(key);
-
                 tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip);
             }
         });
+        notesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NoteFragment noteFragment=new NoteFragment();
+                noteFragment.setTrip(trip);
+                FragmentManager fm=getFragmentManager();
+                FragmentTransaction ft= fm.beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.fMain,noteFragment,"tripFragmentTag");
+                ft.commit();
+            }
+        });
+
         return view;
     }
 
@@ -271,5 +293,9 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             tripDest.setText(feature.text());
             trip.setEndPoint(new TripLocation(feature.center().latitude(), feature.center().longitude(), feature.text()));
         }
+    }
+    public void setTripNotes( ArrayList<Note> notesArrayList)
+    {
+        trip.setNotes(notesArrayList);
     }
 }
