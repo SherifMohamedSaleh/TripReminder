@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/til_note_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2">
+
+            <EditText
+                android:id="@+id/et_note_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add note"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <ImageButton
+            android:id="@+id/btn_note_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
+            android:src="@android:drawable/ic_delete" />
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
