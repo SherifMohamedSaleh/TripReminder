@@ -52,6 +52,10 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
     // variables needed to initialize navigation
     private FloatingActionButton button;
 
+    double lat1, lng1, lat2, lng2;
+    Point destinationPoint;
+    Point originPoint;
+
 
     public RoutingFragment() {
         // Required empty public constructor
@@ -69,7 +73,7 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
         mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
-                enableLocationComponent(style);
+                // enableLocationComponent(style);
             }
         });
     }
@@ -80,27 +84,20 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
         // Inflate the layout for this fragment
         Mapbox.getInstance(getContext(), MAPBOX_ACCESS_TOKEN);
         View rootView = inflater.inflate(R.layout.fragment_routing, container, false);
+        lat1 = 31.2111877; //29.91667
+        lng1 = 29.9245365; //31.2
+        lat2 = 31.2111460; //31.23944
+        lng2 = 29.9246547; //30.05611
+        destinationPoint = Point.fromLngLat(lng2, lat2);
+        originPoint = Point.fromLngLat(lng1, lat1);
 
         mapView = rootView.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
         button = rootView.findViewById(R.id.btn_start_navigation);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean simulateRoute = true;
-                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                        .directionsRoute(currentRoute)
-                        .shouldSimulateRoute(simulateRoute)
-                        .build();
-// Call this method with Context from within an Activity
-                NavigationLauncher.startNavigation(getActivity(), options);
-            }
-        });
 
-        Point originPoint = Point.fromLngLat(30.05611, 31.23944);
-        Point destinationPoint = Point.fromLngLat(31.2, 29.91667);
+
         getRoute(originPoint, destinationPoint);
 
         return rootView;
@@ -189,8 +186,7 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
-        Point destinationPoint = Point.fromLngLat(30.05611, 31.23944);
-        Point originPoint = Point.fromLngLat(31.2, 29.91667);
+
         getRoute(originPoint, destinationPoint);
 
         return false;
@@ -225,8 +221,24 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
                         }
                         navigationMapRoute.addRoute(currentRoute);
 
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                boolean simulateRoute = false;
+                                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                        .directionsRoute(currentRoute)
+                                        .shouldSimulateRoute(simulateRoute)
+                                        .build();
+// Call this method with Context from within an Activity
+                                NavigationLauncher.startNavigation(getActivity(), options);
+
+
+                            }
+                        });
+
 
                     }
+
 
                     @Override
                     public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
