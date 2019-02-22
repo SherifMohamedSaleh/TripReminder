@@ -1,5 +1,8 @@
 package com.example.trip.models;
 
+/**
+ * Created by Toka on 2019-02-17.
+ */
 public class TripDate {
     private int day;
     private int month;
@@ -38,3 +41,4 @@ public class TripDate {
         this.year = year;
     }
 }
+

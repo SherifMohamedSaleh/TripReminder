@@ -72,9 +72,10 @@
             android:id="@+id/switch_rounded_trip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@string/roundtrip"
+            android:text="@string/rounded_trip"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_trip_date" />
 
@@ -91,9 +92,9 @@
             android:id="@+id/tv_start_point_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:text="@string/start_point"
             app:layout_constraintBottom_toBottomOf="@+id/btn_start_point"
             app:layout_constraintStart_toStartOf="parent"

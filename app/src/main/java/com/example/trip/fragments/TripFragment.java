@@ -54,7 +54,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
     private static final int REQUEST_CODE_END_AUTOCOMPLETE = 2;
 
-    EditText tripName,tripDate,tripTime,tripSource,tripDest,tripNotes;
+    EditText tripName,tripDate,tripTime,tripSource,tripDest;
     FloatingActionButton editTrip,startTrip,saveTrip;
     Button notesBtn,roundedBtn;
     TextView tripStatus;
@@ -66,18 +66,6 @@ public class TripFragment extends Fragment implements FirebaseReferences {
 
     public TripFragment() {
 
-     //firebase trip
-        trip=new Trip();
-        TripDate d=new TripDate(1,29,2008);
-        TripLocation l=new TripLocation(112,343,"Miami");
-        TripTime t=new TripTime(2,3);
-        trip.setTripName("Home");
-        trip.setDate(d);
-        trip.setId("12");
-        trip.setStatus("u");
-        trip.setEndPoint(l);
-        trip.setStartPoint(l);
-        trip.setTime(t);
     }
 
     @Override
@@ -296,5 +284,9 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     public void setTripNotes( ArrayList<Note> notesArrayList)
     {
         trip.setNotes(notesArrayList);
+    }
+    public void setTrip(Trip trip)
+    {
+        this.trip=trip;
     }
 }

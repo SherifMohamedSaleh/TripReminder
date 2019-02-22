@@ -1,5 +1,8 @@
 package com.example.trip.models;
 
+/**
+ * Created by Toka on 2019-02-17.
+ */
 public class TripTime {
     private int hour;
     private int minute;

@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.example.trip.R;
 import com.example.trip.fragments.SettingsFragment;
 import com.example.trip.fragments.TripFragment;
+import com.example.trip.fragments.UpComingFragment;
 
 
 public class HomeNavigationActivity extends AppCompatActivity
@@ -36,9 +37,10 @@ public class HomeNavigationActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-        //ft.replace(R.id.fMain,new HomeFragment());
-        //ft.commit();
+        FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+        ft.addToBackStack(null);
+        ft.replace(R.id.fMain,new UpComingFragment());
+        ft.commit();
         navigationView.setCheckedItem(R.id.nav_home);
     }
 
@@ -79,8 +81,9 @@ public class HomeNavigationActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
              FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
-             ft.replace(R.id.fMain,new TripFragment());
-             ft.commit();
+             ft.replace(R.id.fMain,new UpComingFragment());
+            ft.addToBackStack(null);
+            ft.commit();
         } else if (id == R.id.nav_trips) {
 
         }
@@ -89,10 +92,11 @@ public class HomeNavigationActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_settings) {
             FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            ft.addToBackStack(null);
             ft.replace(R.id.fMain,new SettingsFragment());
             ft.commit();
         }  else if (id == R.id.nav_logout) {
-            AlertDialog.Builder builder;
+   /*         AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder = new AlertDialog.Builder(getApplicationContext(), android.R.style.Theme_Material_Dialog_Alert);
             } else {
@@ -103,6 +107,9 @@ public class HomeNavigationActivity extends AppCompatActivity
                     //logout code
                 }
             });
+            AlertDialog alert=builder.create();
+            alert.show();
+            */
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
