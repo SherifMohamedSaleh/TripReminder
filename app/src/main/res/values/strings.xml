@@ -10,6 +10,7 @@
     <string name="twitter_consumer_secret" translatable="false">YOUR_CONSUMER_SECRET</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="trip_name">Name</string>
+    <string name="next">next</string>
     <string name="title_activity_home_navigation">HomeNavigationActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -34,4 +35,10 @@
     <string name="tripNotes">Notes</string>
     <string name="saveNotes">Save</string>
     <string name="roundtrip">Round Trip</string>
+    <string name="trip_notes">Trip Notes</string>
+    <string name="start_point">Start Point</string>
+    <string name="end_point">End Point</string>
+    <string name="rounded_trip">Rounded Trip</string>
 </resources>
+
+

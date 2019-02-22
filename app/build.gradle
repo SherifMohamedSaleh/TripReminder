@@ -9,6 +9,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -27,18 +28,27 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
     implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
-    implementation 'com.google.firebase:firebase-database:16.0.6'
     // Required only if Facebook login support is required
     // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
     implementation 'com.facebook.android:facebook-android-sdk:4.40.0'
-    implementation 'com.facebook.android:facebook-login:[4,5)'
-    //  implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+    implementation 'com.facebook.android:facebook-login:4.40.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.40.0'
     // Required only if Twitter login support is required
     // Find the latest Twitter SDK releases here: https://goo.gl/E5wZvQ
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v7:0.7.0'
-
     implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
+
+    //maps
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v7:0.7.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.27.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.27.0'
+
+
+
+    //database
+    implementation 'com.google.firebase:firebase-database:16.0.6'
+
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

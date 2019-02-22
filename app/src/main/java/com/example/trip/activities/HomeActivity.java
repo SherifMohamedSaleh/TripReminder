@@ -33,8 +33,8 @@ public class HomeActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
 
-        RecyclerAdapter adapter = new RecyclerAdapter(tripDataList);
-        rv.setAdapter(adapter);
+      //  RecyclerAdapter adapter = new RecyclerAdapter(tripDataList);
+     //   rv.setAdapter(adapter);
     }
 
 }

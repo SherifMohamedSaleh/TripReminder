@@ -66,7 +66,7 @@ public class NoteFragment extends Fragment implements FirebaseReferences {
 
                 String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
                 trip.setId(key);
-                tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip);
+                tripsRef.child(firebaseUser.getUid()).child(trip.getId()).setValue(trip);
                 TripFragment tripFragment=new TripFragment();
                 FragmentManager fragmentManager=getFragmentManager();
                 FragmentTransaction ft= fragmentManager.beginTransaction();

@@ -73,6 +73,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         TripTime t=new TripTime(2,3);
         trip.setTripName("Home");
         trip.setDate(d);
+        trip.setId("12");
         trip.setStatus("u");
         trip.setEndPoint(l);
         trip.setStartPoint(l);
@@ -259,9 +260,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 doneCheckBox.setFocusable(false);
                 doneCheckBox.setClickable(false);
                 trip.setTripName(tripName.getText().toString());
-                String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
-                trip.setId(key);
-                tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip);
+                tripsRef.child(firebaseUser.getUid()).child(trip.getId()).setValue(trip);
             }
         });
         notesBtn.setOnClickListener(new View.OnClickListener() {
