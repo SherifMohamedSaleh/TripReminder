@@ -5,7 +5,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.trip"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -42,8 +42,6 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v7:0.7.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.27.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.27.0'
-
-
 
     //database
     implementation 'com.google.firebase:firebase-database:16.0.6'

@@ -1,8 +1,9 @@
 package com.example.trip.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Trip {
+public class Trip implements Serializable {
     private boolean isRoundedTrip;
     private ArrayList<Note> notes;
     private String tripName;
@@ -10,15 +11,18 @@ public class Trip {
     private TripLocation startPoint;
     private TripDate date;
     private TripTime time;
-    private boolean isFinished;
+    private int tripRequestId;
+    private String status; //u for upcoming, d for done , c for cancelled
+    private String id;
 
     public Trip() {
         isRoundedTrip = false;
-        isFinished = false;
+        status = "u";
         notes = new ArrayList<>();
     }
 
-    public Trip(boolean isRoundedTrip, ArrayList<Note> notes, String tripName, TripLocation endPoint, TripLocation startPoint, TripDate date, TripTime time) {
+
+    public Trip(boolean isRoundedTrip, ArrayList<Note> notes, String tripName, TripLocation endPoint, TripLocation startPoint, TripDate date, TripTime time, int tripRequestId) {
         this.isRoundedTrip = isRoundedTrip;
         this.notes = notes;
         this.tripName = tripName;
@@ -26,6 +30,33 @@ public class Trip {
         this.startPoint = startPoint;
         this.date = date;
         this.time = time;
+        this.tripRequestId = tripRequestId;
+
+
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getTripRequestId() {
+        return tripRequestId;
+    }
+
+    public void setTripRequestId(int tripRequestId) {
+        this.tripRequestId = tripRequestId;
     }
 
     public String getTripName() {
@@ -88,11 +119,4 @@ public class Trip {
         this.notes = notes;
     }
 
-    public boolean isFinished() {
-        return isFinished;
-    }
-
-    public void setFinished(boolean finished) {
-        isFinished = finished;
-    }
 }
