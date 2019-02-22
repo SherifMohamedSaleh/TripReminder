@@ -62,7 +62,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     ImageView tripImage;
     Boolean editMode=false;
     Drawable draw;
-    static Trip trip;
+    Trip trip;
 
     public TripFragment() {
 
@@ -281,10 +281,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             trip.setEndPoint(new TripLocation(feature.center().latitude(), feature.center().longitude(), feature.text()));
         }
     }
-    public void setTripNotes( ArrayList<Note> notesArrayList)
-    {
-        trip.setNotes(notesArrayList);
-    }
+
     public void setTrip(Trip trip)
     {
         this.trip=trip;

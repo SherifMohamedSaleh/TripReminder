@@ -64,13 +64,12 @@ public class NoteFragment extends Fragment implements FirebaseReferences {
             @Override
             public void onClick(View v) {
 
-                String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
-                trip.setId(key);
                 tripsRef.child(firebaseUser.getUid()).child(trip.getId()).setValue(trip);
                 TripFragment tripFragment=new TripFragment();
                 FragmentManager fragmentManager=getFragmentManager();
                 FragmentTransaction ft= fragmentManager.beginTransaction();
-                tripFragment.setTripNotes(notesArrayList);
+                trip.setNotes(notesArrayList);
+                tripFragment.setTrip(trip);
                 ft.replace(R.id.fMain,tripFragment);
                 ft.commit();
 
