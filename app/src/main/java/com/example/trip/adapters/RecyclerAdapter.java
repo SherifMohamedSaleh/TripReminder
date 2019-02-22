@@ -2,18 +2,19 @@ package com.example.trip.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trip.R;
-import com.example.trip.fragments.RoutingFragment;
+import com.example.trip.fragments.TripFragment;
+import com.example.trip.fragments.UpComingFragment;
 import com.example.trip.models.Trip;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, final int position) {
 
-        Trip tripData = tripDataList.get(position);
+        final Trip tripData = tripDataList.get(position);
         holder.textOne.setText(tripData.getTripName());
         holder.textTwo.setText("sat");
         holder.textThree.setText("10:30");
@@ -48,26 +49,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(context, " hello to another screen  : item  " + position + "  selected", Toast.LENGTH_SHORT).show();
+                TripFragment tripFragment=new TripFragment();
+                tripFragment.setTrip(tripData);
+                FragmentTransaction ft=((AppCompatActivity)context).getSupportFragmentManager().beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.fMain,tripFragment);
+                ft.commit();
+                //Toast.makeText(context, " hello to another screen  : item  " + position + "  selected", Toast.LENGTH_SHORT).show();
             }
         });
 
-        holder.startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*FragmentManager manager=((AppCompatActivity)context).getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                transaction.replace(R.id.activity_main, fragment);
-                transaction.commit();*/
-                RoutingFragment fragment = new RoutingFragment();
-
-                AppCompatActivity activity = (AppCompatActivity) view.getContext();
-
-                activity.getSupportFragmentManager().beginTransaction().replace(activity.findViewById(R.id.activity_main).getId(), fragment).addToBackStack(null).commit();
-
-
-            }
-        });
     }
 
     @Override
@@ -84,7 +75,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
 
         TextView textOne, textTwo, textThree, textFour, textFive;
         CardView cardView;
-        ImageButton startButton;
 
 
         public ProductViewHolder(View itemView) {
@@ -96,7 +86,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
             //     textFour = itemView.findViewById(R.id.textFour);
             //   textFive = itemView.findViewById(R.id.textFive);
             cardView = (CardView) itemView.findViewById(R.id.cardview_id);
-            startButton = itemView.findViewById(R.id.btn_start_trip);
         }
     }
 }

@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
-                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
     }
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                Intent intent = new Intent(this, AllTripsActivity.class);
+                Intent intent = new Intent(this, HomeNavigationActivity.class);
                 startActivity(intent);
                 // ...
             } else {

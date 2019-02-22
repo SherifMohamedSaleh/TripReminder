@@ -1,12 +1,17 @@
 package com.example.trip.fragments;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +34,7 @@ import com.example.trip.models.Trip;
 import com.example.trip.models.TripDate;
 import com.example.trip.models.TripLocation;
 import com.example.trip.models.TripTime;
+import com.example.trip.utils.AlertReceiver;
 import com.example.trip.utils.FirebaseReferences;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
@@ -39,7 +45,7 @@ import java.util.Calendar;
 
 import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_FULLSCREEN;
 
-public class AddTripFragment extends Fragment implements FirebaseReferences {
+public class AddTripFragment extends Fragment implements FirebaseReferences /*,TimePickerDialog.OnTimeSetListener  ,DatePickerDialog.OnDateSetListener */ {
     private static final String TAG = "AddTripFragment";
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
@@ -55,12 +61,14 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
     ArrayList<Note> notesArrayList;
     AddNotesAdapter addNotesAdapter;
     LinearLayoutManager linearLayoutManager;
+    Calendar calender;
 
     Trip trip;
 
+
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_trip, container, false);
 
         tripNameEditText = rootView.findViewById(R.id.et_trip_name);
@@ -84,7 +92,8 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
 
         trip = new Trip();
 
-        final Calendar calender = Calendar.getInstance();
+
+        calender = Calendar.getInstance();
         final int hour = calender.get(Calendar.HOUR_OF_DAY);
         final int minute = calender.get(Calendar.MINUTE);
         final int year = calender.get(Calendar.YEAR);
@@ -99,24 +108,36 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
                     public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
                         Log.i(TAG, "hours: " + selectedHours + " minutes: " + selectedMinute);
                         trip.setTime(new TripTime(selectedHours, selectedMinute));
+                        calender.set(Calendar.HOUR_OF_DAY, selectedHours);
+                        calender.set(Calendar.MINUTE, selectedMinute);
+                        calender.set(Calendar.SECOND, 0);
+
+                        Log.i(TAG, " calender1 hours: " + selectedHours + " minutes: " + selectedMinute);
                     }
 
                 }, hour, minute, false);
+
 
                 timePickerDialog.show();
             }
         });
 
-
         dateButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+
+
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
 
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                         Log.i(TAG, "i:" + year + " i1: " + month + " i2: " + day);
                         trip.setDate(new TripDate(day, month, year));
+                        calender.set(Calendar.YEAR, year);
+                        calender.set(Calendar.MONTH, month);
+                        calender.set(Calendar.DAY_OF_MONTH, day);
+
                     }
                 }, year, month, day);
                 datePickerDialog.show();
@@ -165,15 +186,43 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
 
                 trip.setRoundedTrip(isRoundedSwitch.isChecked());
 
+                int m = startAlarm(calender);
+
+                trip.setTripRequestId(m);
                 String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
-
                 trip.setId(key);
-
                 tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip);
+
+
             }
         });
 
         return rootView;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private int startAlarm(Calendar calendar) {
+
+        Log.i(TAG, "StartAlarm  hours: " + calendar.get(calendar.HOUR) + " minutes: " + calendar.get(calendar.MINUTE));
+        Log.i(TAG, "StartAlarm  Year: " + calendar.get(calendar.YEAR) + " Month: " + calendar.get(calendar.MONTH) + " Day" + calendar.get(calendar.DAY_OF_MONTH));
+
+
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        int x = (int) calendar.getTimeInMillis();
+        Intent intent = new Intent(getContext(), AlertReceiver.class);
+        intent.putExtra("id", x);
+        Log.i(TAG, "id" + x);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), x, intent, 0);
+
+        if (calendar.before(Calendar.getInstance())) {
+            calendar.add(Calendar.DATE, 1);
+            Log.i(TAG, "calender added" + calendar.get(calendar.MINUTE) + "hahahahaaaaaaaaaa");
+        }
+
+        alarmManager.setExact(alarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+
+
+        return x;
     }
 
     @Override
@@ -190,6 +239,4 @@ public class AddTripFragment extends Fragment implements FirebaseReferences {
 
         }
     }
-
-
 }

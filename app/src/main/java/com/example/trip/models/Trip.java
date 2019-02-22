@@ -1,8 +1,9 @@
 package com.example.trip.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Trip {
+public class Trip implements Serializable {
     private boolean isRoundedTrip;
     private ArrayList<Note> notes;
     private String tripName;
@@ -10,6 +11,7 @@ public class Trip {
     private TripLocation startPoint;
     private TripDate date;
     private TripTime time;
+    private int tripRequestId;
     private String status; //u for upcoming, d for done , c for cancelled
     private String id;
 
@@ -20,7 +22,7 @@ public class Trip {
     }
 
 
-    public Trip(boolean isRoundedTrip, ArrayList<Note> notes, String tripName, TripLocation endPoint, TripLocation startPoint, TripDate date, TripTime time) {
+    public Trip(boolean isRoundedTrip, ArrayList<Note> notes, String tripName, TripLocation endPoint, TripLocation startPoint, TripDate date, TripTime time, int tripRequestId) {
         this.isRoundedTrip = isRoundedTrip;
         this.notes = notes;
         this.tripName = tripName;
@@ -28,6 +30,33 @@ public class Trip {
         this.startPoint = startPoint;
         this.date = date;
         this.time = time;
+        this.tripRequestId = tripRequestId;
+
+
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getTripRequestId() {
+        return tripRequestId;
+    }
+
+    public void setTripRequestId(int tripRequestId) {
+        this.tripRequestId = tripRequestId;
     }
 
     public String getTripName() {
@@ -90,19 +119,4 @@ public class Trip {
         this.notes = notes;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }
