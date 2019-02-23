@@ -239,5 +239,4 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
 
         }
     }
-
 }

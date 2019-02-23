@@ -12,12 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+
         <activity
             android:name=".activities.Dialog"
             android:excludeFromRecents="false"
             android:launchMode="singleTask"
             android:taskAffinity=""
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"></activity>
+        <activity
+            android:name=".activities.HomeNavigationActivity"
+            android:label="@string/title_activity_home_navigation"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".activities.AllTripsActivity" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>

@@ -53,7 +53,6 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
 
         if (firebaseUser != null) {
-
             // DatabaseReference userRef=tripsRef.child(firebaseUser.getUid());
             Log.e("AllTripsActivity", "onCreate: " + firebaseUser.getUid());
             tripsRef.child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
@@ -65,16 +64,13 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
                     if (trip != null) {
 
                         Log.e("AllTripsActivity", "onCreate: " + "add to list");
-
                         tripDataList.add(trip);
                         adapter.notifyDataSetChanged();
-
                         Log.e("AllTripsActivity", "onCreate: " + tripDataList.size());
 
 
                     } else {
                         Log.e("AllTripsActivity", "onCreate: " + "no current user");
-
 
                     }
                 }
