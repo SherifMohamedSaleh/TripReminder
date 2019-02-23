@@ -7,5 +7,6 @@ import java.util.ArrayList;
 
 public interface Communicator {
     public void tripResponse(Trip trip);
+
     public void notesResponse(ArrayList<Note> notes);
 }
