@@ -1,9 +1,13 @@
 package com.example.trip.fragments;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,23 +15,27 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.trip.R;
+import com.example.trip.adapters.NotesAdapter;
+import com.example.trip.models.Trip;
+import com.example.trip.models.TripLocation;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
-import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
+import com.mapbox.services.android.navigation.ui.v5.NavigationView;
+import com.mapbox.services.android.navigation.ui.v5.NavigationViewOptions;
+import com.mapbox.services.android.navigation.ui.v5.OnNavigationReadyCallback;
+import com.mapbox.services.android.navigation.ui.v5.listeners.NavigationListener;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
+import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
+import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 
 import java.util.List;
 
@@ -39,10 +47,10 @@ import retrofit2.Response;
 
 // classes to calculate a route
 
-public class RoutingFragment extends Fragment implements OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
+public class RoutingFragment extends Fragment implements OnNavigationReadyCallback, NavigationListener, PermissionsListener, ProgressChangeListener {
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private static final String TAG = "DirectionsActivity";
-    private MapView mapView;
+    DirectionsRoute directionsRoute;
     private MapboxMap mapboxMap;
     private PermissionsManager permissionsManager;
     private LocationComponent locationComponent;
@@ -51,10 +59,14 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
     private NavigationMapRoute navigationMapRoute;
     // variables needed to initialize navigation
     private FloatingActionButton button;
+    Trip trip;
+    private NavigationView navigationView;
+    private RecyclerView notesRecyclerView;
 
-    double lat1, lng1, lat2, lng2;
+    /*double lat1, lng1, lat2, lng2;
     Point destinationPoint;
-    Point originPoint;
+    Point originPoint;*/
+    private NotesAdapter notesAdapter;
 
 
     public RoutingFragment() {
@@ -64,18 +76,6 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
-        this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                // enableLocationComponent(style);
-            }
-        });
     }
 
     @Override
@@ -84,22 +84,31 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
         // Inflate the layout for this fragment
         Mapbox.getInstance(getContext(), MAPBOX_ACCESS_TOKEN);
         View rootView = inflater.inflate(R.layout.fragment_routing, container, false);
-        lat1 = 31.2111877; //29.91667
+        /*lat1 = 31.2111877; //29.91667
         lng1 = 29.9245365; //31.2
-        lat2 = 31.2111460; //31.23944
-        lng2 = 29.9246547; //30.05611
+        lat2 = 31.210574; //31.23944
+        lng2 = 29.924665; //30.05611
         destinationPoint = Point.fromLngLat(lng2, lat2);
-        originPoint = Point.fromLngLat(lng1, lat1);
+        originPoint = Point.fromLngLat(lng1, lat1);*/
 
-        mapView = rootView.findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
-
-        button = rootView.findViewById(R.id.btn_start_navigation);
+        navigationView = rootView.findViewById(R.id.navigation_view);
+        notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
 
 
-        getRoute(originPoint, destinationPoint);
-
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            trip = (Trip) bundle.getSerializable("trip");
+            if (trip != null) {
+                if (trip.getNotes() != null) {
+                    notesAdapter = new NotesAdapter(trip.getNotes(), getContext());
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                    notesRecyclerView.setAdapter(notesAdapter);
+                    notesRecyclerView.setLayoutManager(linearLayoutManager);
+                }
+                navigationView.onCreate(savedInstanceState);
+                navigationView.initialize(this);
+            }
+        }
         return rootView;
     }
 
@@ -140,105 +149,96 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
         }
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
-        mapView.onStart();
+        navigationView.onStart();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mapView.onResume();
+        navigationView.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        navigationView.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            navigationView.onRestoreInstanceState(savedInstanceState);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        navigationView.onPause();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mapView.onStop();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
+        navigationView.onStop();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        navigationView.onLowMemory();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        navigationView.onDestroy();
+    }
+
+    @Override
+    public void onNavigationReady(boolean isRunning) {
+        getRoute(trip.getStartPoint(), trip.getEndPoint());
     }
 
 
     @Override
-    public boolean onMapClick(@NonNull LatLng point) {
-
-        getRoute(originPoint, destinationPoint);
-
-        return false;
+    public void onCancelNavigation() {
+        navigationView.stopNavigation();
+        //stopNavigation();
     }
 
-    private void getRoute(Point origin, Point destination) {
+    @Override
+    public void onNavigationFinished() {
+// no-op
+        //Toast.makeText(getContext(), "Arriveddd", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNavigationRunning() {
+// no-op
+    }
+
+
+    private void getRoute(TripLocation origin, TripLocation destination) {
+        Point destinationPoint = Point.fromLngLat(destination.getLng(), destination.getLat());
+        Point originPoint = Point.fromLngLat(origin.getLng(), origin.getLat());
         NavigationRoute.builder(getContext())
                 .accessToken(Mapbox.getAccessToken())
-                .origin(origin)
-                .destination(destination)
+                .origin(originPoint)
+                .destination(destinationPoint)
                 .build()
                 .getRoute(new Callback<DirectionsResponse>() {
                     @Override
                     public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                        // You can get the generic HTTP info about the response
-                        Log.d(TAG, "Response code: " + response.code());
-                        if (response.body() == null) {
-                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
-                            return;
-                        } else if (response.body().routes().size() < 1) {
-                            Log.e(TAG, "No routes found");
-                            return;
+                        if (response.body() != null && response.body().routes().size() > 0) {
+                            directionsRoute = response.body().routes().get(0);
+                            startNavigation();
                         }
-
-                        currentRoute = response.body().routes().get(0);
-
-                        // Draw the route on the map
-                        if (navigationMapRoute != null) {
-                            navigationMapRoute.removeRoute();
-                        } else {
-                            navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
-                        }
-                        navigationMapRoute.addRoute(currentRoute);
-
-                        button.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                boolean simulateRoute = false;
-                                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                                        .directionsRoute(currentRoute)
-                                        .shouldSimulateRoute(simulateRoute)
-                                        .build();
-// Call this method with Context from within an Activity
-                                NavigationLauncher.startNavigation(getActivity(), options);
-
-
-                            }
-                        });
-
-
                     }
-
 
                     @Override
                     public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
@@ -247,4 +247,30 @@ public class RoutingFragment extends Fragment implements OnMapReadyCallback, Map
                 });
     }
 
+    private void startNavigation() {
+        if (directionsRoute == null) {
+            return;
+        }
+        //TODO start navigation from start and not from current location
+        NavigationViewOptions options = NavigationViewOptions.builder()
+                .directionsRoute(directionsRoute)
+                .shouldSimulateRoute(false)
+                .navigationListener(RoutingFragment.this)
+                .progressChangeListener(this)
+                .build();
+        navigationView.startNavigation(options);
+    }
+
+
+    @Override
+    public void onProgressChange(Location location, RouteProgress routeProgress) {
+        //TODO handel it
+        Log.i(TAG, "distance: " + routeProgress.fractionTraveled());
+        if (routeProgress.fractionTraveled() > 0.9)
+            // Toast.makeText(getContext(), "0 remaininggg", Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Speed: " + location.getSpeed());
+        //Toast.makeText(getContext(), "speed "+location.getSpeed(), Toast.LENGTH_SHORT).show();
+
+
+    }
 }

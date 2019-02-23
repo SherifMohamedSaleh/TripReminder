@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import com.example.trip.R;
 import com.example.trip.adapters.AddNotesAdapter;
 import com.example.trip.models.Note;
 import com.example.trip.models.Trip;
-import com.example.trip.utils.Communicator;
 import com.example.trip.utils.FirebaseReferences;
 
 import java.util.ArrayList;

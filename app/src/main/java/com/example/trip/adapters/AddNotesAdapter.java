@@ -31,7 +31,7 @@ public class AddNotesAdapter extends RecyclerView.Adapter<AddNotesAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_note, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_note, parent, false);
         Log.i(TAG, "onCreateViewHolder " + notesArrayList.toString());
         EditText editText = view.findViewById(R.id.et_note_name);
         editText.setText("");

@@ -7,7 +7,6 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,42 +24,40 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.trip.R;
-import com.example.trip.models.Note;
 import com.example.trip.models.Trip;
 import com.example.trip.models.TripDate;
 import com.example.trip.models.TripLocation;
 import com.example.trip.models.TripTime;
 import com.example.trip.utils.FirebaseReferences;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
+
+import java.util.Calendar;
+
 import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_CARDS;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class TripFragment extends Fragment implements FirebaseReferences {
 
+    private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
+    private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
+    private static final int REQUEST_CODE_END_AUTOCOMPLETE = 2;
     final Calendar calender = Calendar.getInstance();
     final int hour = calender.get(Calendar.HOUR_OF_DAY);
     final int minute = calender.get(Calendar.MINUTE);
     final int year = calender.get(Calendar.YEAR);
     final int month = calender.get(Calendar.MONTH);
     final int day = calender.get(Calendar.DAY_OF_MONTH);
-    private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
-    private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
-    private static final int REQUEST_CODE_END_AUTOCOMPLETE = 2;
-
-    EditText tripName,tripDate,tripTime,tripSource,tripDest;
-    FloatingActionButton editTrip,startTrip,saveTrip;
-    Button notesBtn,roundedBtn;
+    EditText tripName, tripDate, tripTime, tripSource, tripDest;
+    FloatingActionButton editTrip, startTrip, saveTrip;
+    Button notesBtn, roundedBtn;
     TextView tripStatus;
     CheckBox doneCheckBox;
     ImageView tripImage;
-    Boolean editMode=false;
+    Boolean editMode = false;
     Drawable draw;
     Trip trip;
 
@@ -72,50 +69,44 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view=inflater.inflate(R.layout.fragment_trip, container, false);
-        tripName=view.findViewById(R.id.tripNameVal);
-        tripStatus=view.findViewById(R.id.tripStatusVal);
-        tripDate=view.findViewById(R.id.tripDateVal);
-        tripTime=view.findViewById(R.id.tripTimeVal);
-        tripSource=view.findViewById(R.id.tripSourceVal);
-        tripDest=view.findViewById(R.id.tripDestVal);
-        doneCheckBox=view.findViewById(R.id.doneCheckBox);
-        notesBtn=view.findViewById(R.id.notesBtn);
-        roundedBtn=view.findViewById(R.id.startRoundBtn);
-        editTrip=view.findViewById(R.id.editTripBtn);
-        saveTrip=view.findViewById(R.id.saveTripBtn);
-        startTrip=view.findViewById(R.id.startTripBtn);
-        draw=tripName.getBackground();
+        View view = inflater.inflate(R.layout.fragment_trip, container, false);
+        tripName = view.findViewById(R.id.tripNameVal);
+        tripStatus = view.findViewById(R.id.tripStatusVal);
+        tripDate = view.findViewById(R.id.tripDateVal);
+        tripTime = view.findViewById(R.id.tripTimeVal);
+        tripSource = view.findViewById(R.id.tripSourceVal);
+        tripDest = view.findViewById(R.id.tripDestVal);
+        doneCheckBox = view.findViewById(R.id.doneCheckBox);
+        notesBtn = view.findViewById(R.id.notesBtn);
+        roundedBtn = view.findViewById(R.id.startRoundBtn);
+        editTrip = view.findViewById(R.id.editTripBtn);
+        saveTrip = view.findViewById(R.id.saveTripBtn);
+        startTrip = view.findViewById(R.id.startTripBtn);
+        draw = tripName.getBackground();
         tripName.setText(trip.getTripName());
 
-        if(trip.getStatus().equals("d"))
-        {
+        if (trip.getStatus().equals("d")) {
             tripStatus.setText("Completed");
             doneCheckBox.setChecked(true);
-        }
-        else if(trip.getStatus().equals("u"))
-        {
+        } else if (trip.getStatus().equals("u")) {
             tripStatus.setText("Upcoming");
             doneCheckBox.setChecked(false);
-        }
-            else if(trip.getStatus().equals("c"))
-        {
+        } else if (trip.getStatus().equals("c")) {
             tripStatus.setText("Cancelled");
             doneCheckBox.setChecked(false);
         }
-        if(trip.isRoundedTrip())
-        {
+        if (trip.isRoundedTrip()) {
             roundedBtn.setVisibility(View.VISIBLE);
         }
-        tripDate.setText(Integer.toString(trip.getDate().getDay())+"/"+Integer.toString(trip.getDate().getMonth())+"/"+Integer.toString(trip.getDate().getYear()));
-        tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
-        tripSource.setText("• "+trip.getStartPoint().getAddress());
-        tripDest.setText("• "+trip.getEndPoint().getAddress());
+        tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
+        tripTime.setText(Integer.toString(trip.getTime().getHour()) + ":" + Integer.toString(trip.getTime().getMinute()));
+        tripSource.setText("• " + trip.getStartPoint().getAddress());
+        tripDest.setText("• " + trip.getEndPoint().getAddress());
 
         editTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editMode=true;
+                editMode = true;
                 saveTrip.setVisibility(View.VISIBLE);
                 editTrip.setVisibility(View.INVISIBLE);
                 tripName.setFocusable(true);
@@ -140,8 +131,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 tripDest.setBackgroundDrawable(draw);
             }
         });
-        if(editMode)
-        {
+        if (editMode) {
             startTrip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -149,7 +139,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
                             trip.setTime(new TripTime(selectedHours, selectedMinute));
-                            tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
+                            tripTime.setText(Integer.toString(trip.getTime().getHour()) + ":" + Integer.toString(trip.getTime().getMinute()));
                         }
 
                     }, hour, minute, false);
@@ -167,7 +157,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                             trip.setDate(new TripDate(day, month, year));
-                            tripDate.setText(Integer.toString(trip.getDate().getDay())+"/"+Integer.toString(trip.getDate().getMonth())+"/"+Integer.toString(trip.getDate().getYear()));
+                            tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
                         }
                     }, year, month, day);
                     datePickerDialog.show();
@@ -193,36 +183,34 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                     startActivityForResult(intent, REQUEST_CODE_END_AUTOCOMPLETE);
                 }
             });
-        }
-        else
-            {
-                tripName.setFocusable(false);
-                tripName.setClickable(false);
-                tripName.setFocusableInTouchMode(false);
-                tripName.setBackground(null);
-                tripDate.setFocusable(false);
-                tripDate.setClickable(false);
-                tripDate.setBackground(null);
-                tripDate.setFocusableInTouchMode(false);
-                tripTime.setFocusable(false);
-                tripTime.setClickable(false);
-                tripTime.setBackground(null);
-                tripTime.setFocusableInTouchMode(false);
-                tripSource.setFocusable(false);
-                tripSource.setFocusable(false);
-                tripSource.setBackground(null);
-                tripSource.setFocusableInTouchMode(false);
-                tripDest.setClickable(false);
-                tripDest.setFocusable(false);
-                tripDest.setFocusableInTouchMode(false);
-                tripDest.setBackground(null);
-                doneCheckBox.setFocusable(false);
-                doneCheckBox.setClickable(false);
+        } else {
+            tripName.setFocusable(false);
+            tripName.setClickable(false);
+            tripName.setFocusableInTouchMode(false);
+            tripName.setBackground(null);
+            tripDate.setFocusable(false);
+            tripDate.setClickable(false);
+            tripDate.setBackground(null);
+            tripDate.setFocusableInTouchMode(false);
+            tripTime.setFocusable(false);
+            tripTime.setClickable(false);
+            tripTime.setBackground(null);
+            tripTime.setFocusableInTouchMode(false);
+            tripSource.setFocusable(false);
+            tripSource.setFocusable(false);
+            tripSource.setBackground(null);
+            tripSource.setFocusableInTouchMode(false);
+            tripDest.setClickable(false);
+            tripDest.setFocusable(false);
+            tripDest.setFocusableInTouchMode(false);
+            tripDest.setBackground(null);
+            doneCheckBox.setFocusable(false);
+            doneCheckBox.setClickable(false);
         }
         saveTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editMode=false;
+                editMode = false;
                 saveTrip.setVisibility(View.INVISIBLE);
                 editTrip.setVisibility(View.VISIBLE);
                 tripName.setFocusable(false);
@@ -254,12 +242,12 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         notesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NoteFragment noteFragment=new NoteFragment();
+                NoteFragment noteFragment = new NoteFragment();
                 noteFragment.setTrip(trip);
-                FragmentManager fm=getFragmentManager();
-                FragmentTransaction ft= fm.beginTransaction();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
                 ft.addToBackStack(null);
-                ft.replace(R.id.fMain,noteFragment,"tripFragmentTag");
+                ft.replace(R.id.fMain, noteFragment, "tripFragmentTag");
                 ft.commit();
             }
         });
@@ -282,8 +270,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         }
     }
 
-    public void setTrip(Trip trip)
-    {
-        this.trip=trip;
+    public void setTrip(Trip trip) {
+        this.trip = trip;
     }
 }
