@@ -41,12 +41,12 @@ public class NoteFragment extends Fragment implements FirebaseReferences {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_note, container, false);
+        View view = inflater.inflate(R.layout.fragment_note, container, false);
         notesArrayList = trip.getNotes();
         notesRecyclerView = view.findViewById(R.id.rv_notes);
         addNotesAdapter = new AddNotesAdapter(notesArrayList, getContext());
-        addNote=view.findViewById(R.id.addNoteBtn);
-        saveNotes=view.findViewById(R.id.saveTrip);
+        addNote = view.findViewById(R.id.addNoteBtn);
+        saveNotes = view.findViewById(R.id.saveTrip);
         linearLayoutManager = new LinearLayoutManager(getContext());
         notesRecyclerView.setAdapter(addNotesAdapter);
         notesRecyclerView.setLayoutManager(linearLayoutManager);
@@ -63,27 +63,28 @@ public class NoteFragment extends Fragment implements FirebaseReferences {
             public void onClick(View v) {
 
                 tripsRef.child(firebaseUser.getUid()).child(trip.getId()).setValue(trip);
-                TripFragment tripFragment=new TripFragment();
-                FragmentManager fragmentManager=getFragmentManager();
-                FragmentTransaction ft= fragmentManager.beginTransaction();
+                TripFragment tripFragment = new TripFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
                 trip.setNotes(notesArrayList);
                 tripFragment.setTrip(trip);
-                ft.replace(R.id.fMain,tripFragment);
+                ft.replace(R.id.fMain, tripFragment);
                 ft.commit();
 
             }
         });
         return view;
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        FragmentManager fragmentManager=getFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.popBackStack();
     }
-    public void setTrip(Trip trip)
-    {
-        this.trip=trip;
+
+    public void setTrip(Trip trip) {
+        this.trip = trip;
     }
 
 }

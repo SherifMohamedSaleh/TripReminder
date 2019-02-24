@@ -12,7 +12,7 @@ import com.example.trip.activities.Dialog;
 public class AlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        String id = intent.getStringExtra("id");
+        int id = intent.getIntExtra("id", 0);
         Log.d("AlertReceiver", "onReceive:     :" + id);
         Intent trIntent = new Intent("android.intent.action.MAIN");
         trIntent.setClass(context, Dialog.class);

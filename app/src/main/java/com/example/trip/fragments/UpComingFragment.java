@@ -30,6 +30,7 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
     RecyclerView rv;
     FloatingActionButton addNewTripButton;
+
     List<Trip> tripDataList = new ArrayList<>();
 
     @Override
@@ -53,7 +54,6 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
 
         if (firebaseUser != null) {
-            // DatabaseReference userRef=tripsRef.child(firebaseUser.getUid());
             Log.e("AllTripsActivity", "onCreate: " + firebaseUser.getUid());
             tripsRef.child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
                 @Override
@@ -111,7 +111,11 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
         return rootView;
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        tripDataList.clear();
+    }
 }
 
 
