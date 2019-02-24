@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -57,11 +58,13 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     EditText tripName,tripDate,tripTime,tripSource,tripDest;
     FloatingActionButton editTrip,startTrip,saveTrip;
     Button notesBtn,roundedBtn;
+    NavigationView navigationView;
     TextView tripStatus;
     CheckBox doneCheckBox;
     ImageView tripImage;
     Boolean editMode=false;
     Drawable draw;
+    View view;
     Trip trip;
 
     public TripFragment() {
@@ -72,7 +75,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view=inflater.inflate(R.layout.fragment_trip, container, false);
+        view=inflater.inflate(R.layout.fragment_trip, container, false);
+        navigationView = getActivity().findViewById(R.id.nav_view);
         tripName=view.findViewById(R.id.tripNameVal);
         tripStatus=view.findViewById(R.id.tripStatusVal);
         tripDate=view.findViewById(R.id.tripDateVal);
@@ -286,4 +290,14 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     {
         this.trip=trip;
     }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        FragmentManager fm=getFragmentManager();
+        FragmentTransaction ft= fm.beginTransaction();
+        ft.replace(R.id.fMain,new UpComingFragment());
+        navigationView.setCheckedItem(R.id.nav_home);
+        ft.commit();
+    }
 }
+

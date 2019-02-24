@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.example.trip.R;
+import com.example.trip.fragments.PastTripsFragment;
 import com.example.trip.fragments.SettingsFragment;
 import com.example.trip.fragments.TripFragment;
 import com.example.trip.fragments.UpComingFragment;
@@ -82,10 +83,13 @@ public class HomeNavigationActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
              FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
              ft.replace(R.id.fMain,new UpComingFragment());
-            ft.addToBackStack(null);
-            ft.commit();
+             ft.addToBackStack(null);
+             ft.commit();
         } else if (id == R.id.nav_trips) {
-
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction();
+            ft.addToBackStack(null);
+            ft.replace(R.id.fMain,new PastTripsFragment());
+            ft.commit();
         }
         else if (id == R.id.nav_sync) {
 
