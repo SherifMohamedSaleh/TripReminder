@@ -45,13 +45,8 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.27.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.27.0'
 
-    //slide up panel
-    implementation 'com.sothree.slidinguppanel:library:3.4.0'
-
     //database
     implementation 'com.google.firebase:firebase-database:16.0.6'
-
-
 
 
     testImplementation 'junit:junit:4.12'
