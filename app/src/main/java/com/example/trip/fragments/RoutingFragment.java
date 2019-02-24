@@ -1,5 +1,6 @@
 package com.example.trip.fragments;
 
+import android.app.Dialog;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.trip.R;
@@ -68,6 +71,9 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     Point originPoint;*/
     private NotesAdapter notesAdapter;
 
+    private boolean arrived;
+    private boolean roundFinished;
+
 
     public RoutingFragment() {
         // Required empty public constructor
@@ -94,6 +100,8 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         navigationView = rootView.findViewById(R.id.navigation_view);
         notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
 
+        arrived = false;
+        roundFinished=false;
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -254,7 +262,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         //TODO start navigation from start and not from current location
         NavigationViewOptions options = NavigationViewOptions.builder()
                 .directionsRoute(directionsRoute)
-                .shouldSimulateRoute(false)
+                .shouldSimulateRoute(true)
                 .navigationListener(RoutingFragment.this)
                 .progressChangeListener(this)
                 .build();
@@ -265,12 +273,49 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     @Override
     public void onProgressChange(Location location, RouteProgress routeProgress) {
         //TODO handel it
-        Log.i(TAG, "distance: " + routeProgress.fractionTraveled());
-        if (routeProgress.fractionTraveled() > 0.9)
-            // Toast.makeText(getContext(), "0 remaininggg", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Speed: " + location.getSpeed());
-        //Toast.makeText(getContext(), "speed "+location.getSpeed(), Toast.LENGTH_SHORT).show();
+        if(!arrived || (trip.isRoundedTrip() && !roundFinished)) {
+            if (routeProgress.fractionTraveled() > 0.9) {
+                arrived=true;
+                if (trip.isRoundedTrip()) {
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setCancelable(false);
+                    dialog.setContentView(R.layout.dialog_round_trip);
 
+                    Button letsGoButton = dialog.findViewById(R.id.btn_lets_go);
+                    Button laterButton = dialog.findViewById(R.id.btn_later);
+
+                    letsGoButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            arrived=false;
+                            getRoute(trip.getEndPoint(),trip.getStartPoint());
+                        }
+                    });
+
+                    laterButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.setContentView(R.layout.dialog_round_trip_pickers);
+
+                        /*ImageButton dateButton = dialog.findViewById(R.id.btn);
+                        ImageButton timeButton = dialog.findViewById(R.id.btn_later);
+*/
+                        }
+                    });
+
+                    dialog.show();
+                } else {
+
+                }
+            } else {
+                float speed = location.getSpeed();
+                //TODO add to firebase
+                if (speed != 0)
+                    trip.addSpeed(speed);
+            }
+        }
 
     }
 }

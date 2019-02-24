@@ -14,25 +14,13 @@ public class Trip implements Serializable {
     private int tripRequestId;
     private String status; //u for upcoming, d for done , c for cancelled
     private String id;
+    private ArrayList<Float>speed;
 
     public Trip() {
         isRoundedTrip = false;
         status = "u";
         notes = new ArrayList<>();
-    }
-
-
-    public Trip(boolean isRoundedTrip, ArrayList<Note> notes, String tripName, TripLocation endPoint, TripLocation startPoint, TripDate date, TripTime time, int tripRequestId) {
-        this.isRoundedTrip = isRoundedTrip;
-        this.notes = notes;
-        this.tripName = tripName;
-        this.endPoint = endPoint;
-        this.startPoint = startPoint;
-        this.date = date;
-        this.time = time;
-        this.tripRequestId = tripRequestId;
-
-
+        speed=new ArrayList<>();
     }
 
     public String getStatus() {
@@ -119,4 +107,15 @@ public class Trip implements Serializable {
         this.notes = notes;
     }
 
+    public ArrayList<Float> getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(ArrayList<Float> speed) {
+        this.speed = speed;
+    }
+
+    public void addSpeed(float currentSpeed){
+        speed.add(currentSpeed);
+    }
 }
