@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,6 +30,7 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
     RecyclerView rv;
     FloatingActionButton addNewTripButton;
+
     List<Trip> tripDataList = new ArrayList<>();
 
     @Override
@@ -54,7 +54,6 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
 
         if (firebaseUser != null) {
-            // DatabaseReference userRef=tripsRef.child(firebaseUser.getUid());
             Log.e("AllTripsActivity", "onCreate: " + firebaseUser.getUid());
             tripsRef.child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
                 @Override
@@ -98,6 +97,8 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
                 }
 
             });
+
+
         }
 
         addNewTripButton.setOnClickListener(new View.OnClickListener() {
@@ -114,11 +115,6 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
     public void onDestroyView() {
         super.onDestroyView();
         tripDataList.clear();
-        FragmentManager fm=getFragmentManager();
-      //  for(int i=0;i<fm.getBackStackEntryCount();i++)
-        //{
-          //  fm.popBackStack();
-        //}
     }
 }
 

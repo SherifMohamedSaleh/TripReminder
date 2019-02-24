@@ -51,25 +51,25 @@
             android:layout_weight="0.5"
             android:weightSum="3">
 
-            <EditText
+            <Button
                 android:id="@+id/tripDateVal"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_width="0dp"
                 android:ems="10"
                 android:inputType="date"
                 android:textSize="5pt"
                 android:textStyle="bold" />
 
-            <EditText
+            <Button
                 android:id="@+id/tripTimeVal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="5pt"
-                android:textStyle="bold"
                 android:ems="10"
-                android:inputType="time" />
+                android:inputType="time"
+                android:textSize="5pt"
+                android:textStyle="bold" />
 
             <CheckBox
                 android:id="@+id/doneCheckBox"

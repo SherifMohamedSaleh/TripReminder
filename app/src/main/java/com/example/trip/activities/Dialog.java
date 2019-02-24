@@ -1,8 +1,10 @@
 package com.example.trip.activities;
 
-
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
@@ -11,9 +13,9 @@ import android.util.Log;
 import android.view.Window;
 
 import com.example.trip.utils.NotificationHelper;
-
 public class Dialog extends AppCompatActivity {
-
+    int id;
+    Ringtone ringtone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,36 +23,49 @@ public class Dialog extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         final Context ctx = this;
         Bundle bundle = getIntent().getExtras();
-        int id = bundle.getInt("id", 0);
+        id = bundle.getInt("id", 0);
         Log.d("AlertReceiver", "onReceive:     :" + id);
         Log.d("dialog", "onCreate:     :" + id);
-
         final AlertDialog.Builder alert = new AlertDialog.Builder(ctx);
         alert.setTitle(id + "");
         alert.setMessage("checking");
         alert.setCancelable(false);
-
+        play();
         alert.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
+                //TODO navigate
+                ringtone.stop();
                 finish();
             }
         });
         alert.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
-                NotificationHelper notificationHelper = new NotificationHelper(ctx);
+                dialogInterface.cancel();
+                ringtone.stop();
+                finish();
+            }
+        });
+        alert.setNeutralButton("Later", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                NotificationHelper notificationHelper = new NotificationHelper(ctx, id);
                 NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
                 notificationHelper.getManager().notify(1, nb.build());
                 dialogInterface.cancel();
+                ringtone.stop();
                 finish();
             }
         });
 
         alert.create();
         alert.show();
+    }
 
+    private void play() {
+        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        ringtone = RingtoneManager.getRingtone(getApplicationContext(), sound);
+        ringtone.play();
 
     }
 }

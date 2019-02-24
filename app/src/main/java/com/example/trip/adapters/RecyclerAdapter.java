@@ -10,11 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.trip.R;
 import com.example.trip.fragments.TripFragment;
-import com.example.trip.fragments.UpComingFragment;
 import com.example.trip.models.Trip;
 
 import java.util.List;
@@ -49,11 +47,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
             @Override
             public void onClick(View v) {
 
-                TripFragment tripFragment=new TripFragment();
+                TripFragment tripFragment = new TripFragment();
                 tripFragment.setTrip(tripData);
-                FragmentTransaction ft=((AppCompatActivity)context).getSupportFragmentManager().beginTransaction();
+                FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
                 ft.addToBackStack(null);
-                ft.replace(R.id.fMain,tripFragment);
+                ft.replace(R.id.fMain, tripFragment);
                 ft.commit();
                 //Toast.makeText(context, " hello to another screen  : item  " + position + "  selected", Toast.LENGTH_SHORT).show();
             }
