@@ -2,13 +2,14 @@ package com.example.trip.fragments;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,6 +30,7 @@ import com.example.trip.models.Trip;
 import com.example.trip.models.TripDate;
 import com.example.trip.models.TripLocation;
 import com.example.trip.models.TripTime;
+import com.example.trip.utils.AlertReceiver;
 import com.example.trip.utils.FirebaseReferences;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
@@ -42,26 +44,29 @@ import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOption
  */
 public class TripFragment extends Fragment implements FirebaseReferences {
 
-    final Calendar calender = Calendar.getInstance();
-    final int hour = calender.get(Calendar.HOUR_OF_DAY);
-    final int minute = calender.get(Calendar.MINUTE);
-    final int year = calender.get(Calendar.YEAR);
-    final int month = calender.get(Calendar.MONTH);
-    final int day = calender.get(Calendar.DAY_OF_MONTH);
+    private static final String TAG = "TripFragment";
+    Calendar calender = Calendar.getInstance();
+    Calendar calender1 = Calendar.getInstance();
+    int hour = calender.get(Calendar.HOUR_OF_DAY);
+    int minute = calender.get(Calendar.MINUTE);
+    int year = calender.get(Calendar.YEAR);
+    int month = calender.get(Calendar.MONTH);
+    int day = calender.get(Calendar.DAY_OF_MONTH);
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
     private static final int REQUEST_CODE_END_AUTOCOMPLETE = 2;
 
+    //    EditText tripName,tripSource,tripDest;
+//    FloatingActionButton editTrip,startTrip,saveTrip;
+//    Button notesBtn,roundedBtn , tripDate , tripTime;
     EditText tripName, tripDate, tripTime, tripSource, tripDest;
-    FloatingActionButton editTrip, startTrip, saveTrip;
-    Button notesBtn, roundedBtn;
-    NavigationView navigationView;
+    FloatingActionButton editTrip,startTrip,saveTrip;
+    Button notesBtn,roundedBtn;
     TextView tripStatus;
     CheckBox doneCheckBox;
     ImageView tripImage;
-    Boolean editMode = false;
+    Boolean editMode = true;
     Drawable draw;
-    View view;
     Trip trip;
 
     public TripFragment() {
@@ -72,45 +77,49 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_trip, container, false);
-        navigationView = getActivity().findViewById(R.id.nav_view);
-        tripName = view.findViewById(R.id.tripNameVal);
-        tripStatus = view.findViewById(R.id.tripStatusVal);
-        tripDate = view.findViewById(R.id.tripDateVal);
-        tripTime = view.findViewById(R.id.tripTimeVal);
-        tripSource = view.findViewById(R.id.tripSourceVal);
-        tripDest = view.findViewById(R.id.tripDestVal);
-        doneCheckBox = view.findViewById(R.id.doneCheckBox);
-        notesBtn = view.findViewById(R.id.notesBtn);
-        roundedBtn = view.findViewById(R.id.startRoundBtn);
-        editTrip = view.findViewById(R.id.editTripBtn);
-        saveTrip = view.findViewById(R.id.saveTripBtn);
-        startTrip = view.findViewById(R.id.startTripBtn);
-        draw = tripName.getBackground();
+        View view=inflater.inflate(R.layout.fragment_trip, container, false);
+        tripName=view.findViewById(R.id.tripNameVal);
+        tripStatus=view.findViewById(R.id.tripStatusVal);
+        tripDate=view.findViewById(R.id.tripDateVal);
+        tripTime=view.findViewById(R.id.tripTimeVal);
+        tripSource=view.findViewById(R.id.tripSourceVal);
+        tripDest=view.findViewById(R.id.tripDestVal);
+        doneCheckBox=view.findViewById(R.id.doneCheckBox);
+        notesBtn=view.findViewById(R.id.notesBtn);
+        roundedBtn=view.findViewById(R.id.startRoundBtn);
+        editTrip=view.findViewById(R.id.editTripBtn);
+        saveTrip=view.findViewById(R.id.saveTripBtn);
+        startTrip=view.findViewById(R.id.startTripBtn);
+        draw=tripName.getBackground();
         tripName.setText(trip.getTripName());
 
-        if (trip.getStatus().equals("d")) {
+        if(trip.getStatus().equals("d"))
+        {
             tripStatus.setText("Completed");
             doneCheckBox.setChecked(true);
-        } else if (trip.getStatus().equals("u")) {
+        }
+        else if(trip.getStatus().equals("u"))
+        {
             tripStatus.setText("Upcoming");
             doneCheckBox.setChecked(false);
-        } else if (trip.getStatus().equals("c")) {
+        } else if (trip.getStatus().equals("c"))
+        {
             tripStatus.setText("Cancelled");
             doneCheckBox.setChecked(false);
         }
-        if (trip.isRoundedTrip()) {
+        if(trip.isRoundedTrip())
+        {
             roundedBtn.setVisibility(View.VISIBLE);
         }
-        tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
-        tripTime.setText(Integer.toString(trip.getTime().getHour()) + ":" + Integer.toString(trip.getTime().getMinute()));
-        tripSource.setText("• " + trip.getStartPoint().getAddress());
-        tripDest.setText("• " + trip.getEndPoint().getAddress());
+        tripDate.setText(Integer.toString(trip.getDate().getDay())+"/"+Integer.toString(trip.getDate().getMonth())+"/"+Integer.toString(trip.getDate().getYear()));
+        tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
+        tripSource.setText("• "+trip.getStartPoint().getAddress());
+        tripDest.setText("• "+trip.getEndPoint().getAddress());
 
         editTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editMode = true;
+                editMode=true;
                 saveTrip.setVisibility(View.VISIBLE);
                 editTrip.setVisibility(View.INVISIBLE);
                 tripName.setFocusable(true);
@@ -135,15 +144,26 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 tripDest.setBackgroundDrawable(draw);
             }
         });
-        if (editMode) {
-            startTrip.setOnClickListener(new View.OnClickListener() {
+        if(editMode)
+        {
+
+
+            Log.i(TAG, "onCreateView:      hhhhhhhhhhhhhheeeeeeeeeeeeelllllllllllllllllloooooooooooooooooooooo");
+            tripTime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    Log.i("123123", "onClick:  time ");
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
                             trip.setTime(new TripTime(selectedHours, selectedMinute));
-                            tripTime.setText(Integer.toString(trip.getTime().getHour()) + ":" + Integer.toString(trip.getTime().getMinute()));
+                            //   tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
+
+                            calender1.set(Calendar.HOUR_OF_DAY, selectedHours);
+                            calender1.set(Calendar.MINUTE, selectedMinute);
+                            calender1.set(Calendar.SECOND, 0);
+
+                            Log.i(TAG, " calender1 hours: " + selectedHours + " minutes: " + selectedMinute);
                         }
 
                     }, hour, minute, false);
@@ -151,19 +171,24 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                     timePickerDialog.show();
                 }
             });
-
             tripDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.i("Date", "onClick: ");
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
 
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                             trip.setDate(new TripDate(day, month, year));
-                            tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
+                            //   tripDate.setText(Integer.toString(trip.getDate().getDay())+"/"+Integer.toString(trip.getDate().getMonth())+"/"+Integer.toString(trip.getDate().getYear()));
+                            calender.set(Calendar.YEAR, year);
+                            calender.set(Calendar.MONTH, month);
+                            calender.set(Calendar.DAY_OF_MONTH, day);
+                            Log.i(TAG, " calender1 month: " + month + " day: " + day);
                         }
+
                     }, year, month, day);
+
                     datePickerDialog.show();
                 }
             });
@@ -187,7 +212,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                     startActivityForResult(intent, REQUEST_CODE_END_AUTOCOMPLETE);
                 }
             });
-        } else {
+        }
+        else {
             tripName.setFocusable(false);
             tripName.setClickable(false);
             tripName.setFocusableInTouchMode(false);
@@ -214,7 +240,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         saveTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editMode = false;
+                editMode=false;
+
                 saveTrip.setVisibility(View.INVISIBLE);
                 editTrip.setVisibility(View.VISIBLE);
                 tripName.setFocusable(false);
@@ -239,24 +266,65 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 tripDest.setBackground(null);
                 doneCheckBox.setFocusable(false);
                 doneCheckBox.setClickable(false);
+                //   cancelAlarm();
+                startAlarm(calender1);
+                //   trip.setTripRequestId(id);
                 trip.setTripName(tripName.getText().toString());
+
                 tripsRef.child(firebaseUser.getUid()).child(trip.getId()).setValue(trip);
             }
         });
         notesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NoteFragment noteFragment = new NoteFragment();
+                NoteFragment noteFragment=new NoteFragment();
                 noteFragment.setTrip(trip);
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
+                FragmentManager fm=getFragmentManager();
+                FragmentTransaction ft= fm.beginTransaction();
                 ft.addToBackStack(null);
-                ft.replace(R.id.fMain, noteFragment, "tripFragmentTag");
+                ft.replace(R.id.fMain,noteFragment,"tripFragmentTag");
                 ft.commit();
             }
         });
 
         return view;
+    }
+
+    private void startAlarm(Calendar calendar) {
+
+
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        int x = trip.getTripRequestId();//(int)calendar.getTimeInMillis();
+        Log.i(TAG, "startAlarm: " + x);
+        Intent intent = new Intent(getContext(), AlertReceiver.class);
+        //   intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        intent.putExtra("id", x);
+        Log.i("AlertReceiver", "id" + x);
+        //  trip.setTripRequestId(id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), x, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        Log.i(TAG, "StartAlarm  hours: " + calendar.get(calendar.HOUR) + " minutes: " + calendar.get(calendar.MINUTE));
+        Log.i(TAG, "StartAlarm  Year: " + calendar.get(calendar.YEAR) + " Month: " + calendar.get(calendar.MONTH) + " Day" + calendar.get(calendar.DAY_OF_MONTH));
+
+
+        pendingIntent.getCreatorUid();
+        alarmManager.setExact(alarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        Log.i("AlertReceiver", "startAlarm:     Alerm updated " + calendar.getTimeInMillis());
+
+    }
+
+    private void cancelAlarm() {
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        Intent intent = new Intent(getContext(), AlertReceiver.class);
+        //x = Integer.parseInt(request.getText().toString());
+        int x = trip.getTripRequestId();
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), x, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        pendingIntent.getCreatorUid();
+        alarmManager.cancel(pendingIntent);
+
+        Log.i(TAG, "cancelAlarm:  cancel Alarm");
     }
 
 
@@ -274,18 +342,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         }
     }
 
-    public void setTrip(Trip trip) {
-        this.trip = trip;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fMain, new UpComingFragment());
-        navigationView.setCheckedItem(R.id.nav_home);
-        ft.commit();
+    public void setTrip(Trip trip)
+    {
+        this.trip=trip;
     }
 }
-
