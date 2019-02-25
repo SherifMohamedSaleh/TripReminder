@@ -30,7 +30,6 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
     RecyclerView rv;
     FloatingActionButton addNewTripButton;
-
     List<Trip> tripDataList = new ArrayList<>();
 
     @Override
