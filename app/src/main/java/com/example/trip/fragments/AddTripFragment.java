@@ -14,6 +14,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -56,6 +58,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
     RecyclerView notesRecyclerView;
     TextView startPointTextView, endPointTextView;
     Switch isRoundedSwitch;
+
     Button doneButton;
 
     ArrayList<Note> notesArrayList;
@@ -240,5 +243,17 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
             trip.setEndPoint(new TripLocation(feature.center().latitude(), feature.center().longitude(), feature.text()));
 
         }
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        FragmentManager fm=getFragmentManager();
+        FragmentTransaction ft= fm.beginTransaction();
+        for(int i=0;i<fm.getBackStackEntryCount();i++)
+        {
+            fm.popBackStack();
+        }
+        ft.replace(R.id.fMain,new UpComingFragment());
+        ft.commit();
     }
 }
