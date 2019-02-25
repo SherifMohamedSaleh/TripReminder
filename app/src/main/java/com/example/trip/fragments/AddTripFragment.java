@@ -239,16 +239,16 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
 
         }
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        FragmentManager fm=getFragmentManager();
-        FragmentTransaction ft= fm.beginTransaction();
-        for(int i=0;i<fm.getBackStackEntryCount();i++)
-        {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
             fm.popBackStack();
         }
-        ft.replace(R.id.fMain,new UpComingFragment());
+        ft.replace(R.id.fMain, new UpComingFragment());
         ft.commit();
     }
 }

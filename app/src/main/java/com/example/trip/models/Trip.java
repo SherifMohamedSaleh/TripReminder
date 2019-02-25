@@ -12,15 +12,17 @@ public class Trip implements Serializable {
     private TripDate date;
     private TripTime time;
     private int tripRequestId;
-    private String status; //u for upcoming, d for done , c for cancelled
+    private String status; //u for upcoming, h for halfway only "for rounded trips", d for done , c for cancelled
     private String id;
-    private ArrayList<Float>speed;
+    private float speedSum;
+    private int speedsCount;
 
     public Trip() {
         isRoundedTrip = false;
         status = "u";
         notes = new ArrayList<>();
-        speed=new ArrayList<>();
+        speedSum = 0;
+        speedsCount = 0;
     }
 
     public String getStatus() {
@@ -107,15 +109,19 @@ public class Trip implements Serializable {
         this.notes = notes;
     }
 
-    public ArrayList<Float> getSpeed() {
-        return speed;
+    public float getSpeedSum() {
+        return speedSum;
     }
 
-    public void setSpeed(ArrayList<Float> speed) {
-        this.speed = speed;
+    public void setSpeedSum(float speedSum) {
+        this.speedSum = speedSum;
     }
 
-    public void addSpeed(float currentSpeed){
-        speed.add(currentSpeed);
+    public int getSpeedsCount() {
+        return speedsCount;
+    }
+
+    public void setSpeedsCount(int speedsCount) {
+        this.speedsCount = speedsCount;
     }
 }

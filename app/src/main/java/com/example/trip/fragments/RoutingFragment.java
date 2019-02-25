@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.example.trip.R;
 import com.example.trip.adapters.NotesAdapter;
 import com.example.trip.models.Trip;
 import com.example.trip.models.TripLocation;
+import com.example.trip.utils.FirebaseReferences;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
@@ -40,6 +42,7 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -50,7 +53,7 @@ import retrofit2.Response;
 
 // classes to calculate a route
 
-public class RoutingFragment extends Fragment implements OnNavigationReadyCallback, NavigationListener, PermissionsListener, ProgressChangeListener {
+public class RoutingFragment extends Fragment implements OnNavigationReadyCallback, NavigationListener, PermissionsListener, ProgressChangeListener, FirebaseReferences {
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private static final String TAG = "DirectionsActivity";
     DirectionsRoute directionsRoute;
@@ -73,6 +76,9 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
 
     private boolean arrived;
     private boolean roundFinished;
+    private boolean isHeadingBack;
+
+    private ArrayList<Float> tripSpeeds;
 
 
     public RoutingFragment() {
@@ -101,7 +107,9 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
 
         arrived = false;
-        roundFinished=false;
+        roundFinished = false;
+        isHeadingBack = false;
+        tripSpeeds = new ArrayList<>();
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -273,13 +281,15 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     @Override
     public void onProgressChange(Location location, RouteProgress routeProgress) {
         //TODO handel it
-        if(!arrived || (trip.isRoundedTrip() && !roundFinished)) {
-            if (routeProgress.fractionTraveled() > 0.9) {
-                arrived=true;
-                if (trip.isRoundedTrip()) {
-                    final Dialog dialog = new Dialog(getActivity());
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setCancelable(false);
+        if (!arrived || (isHeadingBack && !roundFinished)) {
+            if (routeProgress.fractionTraveled() > 0.95) {
+                arrived = true;
+                final Dialog dialog = new Dialog(getActivity());
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setCancelable(false);
+
+                if (trip.isRoundedTrip() && !isHeadingBack) {
+
                     dialog.setContentView(R.layout.dialog_round_trip);
 
                     Button letsGoButton = dialog.findViewById(R.id.btn_lets_go);
@@ -289,8 +299,8 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            arrived=false;
-                            getRoute(trip.getEndPoint(),trip.getStartPoint());
+                            isHeadingBack = true;
+                            getRoute(trip.getEndPoint(), trip.getStartPoint());
                         }
                     });
 
@@ -298,22 +308,51 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                         @Override
                         public void onClick(View view) {
                             dialog.setContentView(R.layout.dialog_round_trip_pickers);
+                            //TODO add to firebase and to the variable in the list
+                            trip.setStatus("h");
+                            tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("status").setValue("h");
+                            dialog.dismiss();
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.fMain, new UpComingFragment());
+                            ft.addToBackStack(null);
+                            ft.commit();
 
-                        /*ImageButton dateButton = dialog.findViewById(R.id.btn);
-                        ImageButton timeButton = dialog.findViewById(R.id.btn_later);
-*/
                         }
                     });
 
                     dialog.show();
-                } else {
+                } else if (trip.isRoundedTrip() && isHeadingBack) {
+                    roundFinished = true;
+                } else if (!trip.isRoundedTrip() || (trip.isRoundedTrip() && isHeadingBack && roundFinished)) {
+                    dialog.setContentView(R.layout.dialog_trip_finished);
+                    Button goToHomeButton = dialog.findViewById(R.id.btn_go_to_home_screen);
+                    goToHomeButton.setOnClickListener(view -> {
+                        dialog.dismiss();
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.fMain, new UpComingFragment());
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    });
 
+                    dialog.show();
                 }
+
+                //calculate trip speed
+                float speedSum = trip.getSpeedSum();
+                if (tripSpeeds.size() > 0) {
+                    for (float speed : tripSpeeds) {
+                        speedSum += speed;
+                    }
+                }
+                tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedSum").setValue(speedSum);
+                tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedsCount").setValue(trip.getSpeedsCount() + tripSpeeds.size());
+
             } else {
                 float speed = location.getSpeed();
-                //TODO add to firebase
-                if (speed != 0)
-                    trip.addSpeed(speed);
+                if (speed != 0) {
+                    //TODO add to firebase and to the variable in the list
+                    tripSpeeds.add(speed);
+                }
             }
         }
 

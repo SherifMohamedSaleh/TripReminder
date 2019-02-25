@@ -27,17 +27,18 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view=inflater.inflate(R.layout.fragment_settings, container, false);
+        view = inflater.inflate(R.layout.fragment_settings, container, false);
         navigationView = getActivity().findViewById(R.id.nav_view);
         return view;
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        FragmentManager fm=getFragmentManager();
-        FragmentTransaction ft= fm.beginTransaction();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
         navigationView.setCheckedItem(R.id.nav_home);
-        ft.replace(R.id.fMain,new UpComingFragment());
+        ft.replace(R.id.fMain, new UpComingFragment());
         ft.commit();
     }
 }

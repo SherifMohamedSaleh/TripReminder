@@ -1,9 +1,11 @@
 package com.example.trip.models;
 
+import java.io.Serializable;
+
 /**
  * Created by Toka on 2019-02-17.
  */
-public class TripLocation {
+public class TripLocation implements Serializable {
     private double lat;
     private double lng;
     private String address;
