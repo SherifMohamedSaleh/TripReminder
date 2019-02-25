@@ -62,5 +62,22 @@ public class NotificationHelper extends ContextWrapper {
                 .setLights(0xff00ff00, 300, 100);
 
 
+       
+        /*
+        *
+        *
+        *  Intent notificationIntent = new Intent(context, HomeActivity.class);
+
+    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+    PendingIntent intent = PendingIntent.getActivity(context, 0,
+            notificationIntent, 0);
+
+    notification.setLatestEventInfo(context, title, message, intent);
+    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+    notificationManager.notify(0, notification);*/
+
+
     }
 }

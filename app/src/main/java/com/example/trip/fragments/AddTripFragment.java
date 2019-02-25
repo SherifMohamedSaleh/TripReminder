@@ -214,17 +214,22 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
 
 
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        int x = (int) calendar.getTimeInMillis();
+        int x = (int) System.currentTimeMillis();// Calendar.getInstance().getTimeInMillis();
         Intent intent = new Intent(getContext(), AlertReceiver.class);
+        // intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         intent.putExtra("id", x);
         Log.i("AlertReceiver", "id" + x);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), x, intent, 0);
 
         if (calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
-            Log.i(TAG, "calender added" + calendar.get(calendar.MINUTE) + "hahahaha");
         }
+
+
+        //1551027300469
+
         alarmManager.setExact(alarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        Log.i(TAG, "startAlarm:      Alerm Added " + calendar.getTimeInMillis());
         return x;
     }
 

@@ -51,7 +51,7 @@
             android:layout_weight="0.5"
             android:weightSum="3">
 
-            <Button
+            <EditText
                 android:id="@+id/tripDateVal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -61,7 +61,7 @@
                 android:textSize="5pt"
                 android:textStyle="bold" />
 
-            <Button
+            <EditText
                 android:id="@+id/tripTimeVal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
