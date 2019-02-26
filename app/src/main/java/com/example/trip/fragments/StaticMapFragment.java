@@ -150,15 +150,15 @@ public class StaticMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
-    }
-
-    @Override
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mapView.onDestroy();
     }
 
     private void getRoute(Point origin, Point destination) {
