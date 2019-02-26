@@ -281,6 +281,11 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     @Override
     public void onProgressChange(Location location, RouteProgress routeProgress) {
         //TODO handel it
+        Log.i(TAG, "destance left" + routeProgress.fractionTraveled());
+        Log.i(TAG, "arrived:" + arrived);
+        Log.i(TAG, "is heading back:" + isHeadingBack);
+
+        Log.i(TAG, "roundFinished: " + roundFinished);
         if (!arrived || (isHeadingBack && !roundFinished)) {
             if (routeProgress.fractionTraveled() > 0.95) {
                 Log.i(TAG, "arrived:" + arrived);
@@ -325,10 +330,10 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                     });
 
                     dialog.show();
-                } else if (trip.isRoundedTrip() && isHeadingBack) {
+                } else if (trip.isRoundedTrip() && arrived && isHeadingBack) {
                     roundFinished = true;
                 } else if (!trip.isRoundedTrip() || (trip.isRoundedTrip() && isHeadingBack && roundFinished)) {
-                    roundFinished = true;
+                    //roundFinished = true;
 
                     dialog.setContentView(R.layout.dialog_trip_finished);
                     Button goToHomeButton = dialog.findViewById(R.id.btn_go_to_home_screen);
