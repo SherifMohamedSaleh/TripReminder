@@ -63,9 +63,9 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     // variables for calculating and drawing a route
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
+    Trip trip;
     // variables needed to initialize navigation
     private FloatingActionButton button;
-    Trip trip;
     private NavigationView navigationView;
 
     private boolean arrived;
@@ -346,16 +346,16 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                     tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedsCount").setValue(trip.getSpeedsCount() + tripSpeeds.size());
                 }
 
-            } else 
+            } else
                 float speed = location.getSpeed();
-                if (speed != 0) {
-                    //TODO add to firebase and to the variable in the list
-                    tripSpeeds.add(speed);
-                }
+            if (speed != 0) {
+                //TODO add to firebase and to the variable in the list
+                tripSpeeds.add(speed);
             }
         }
-
     }
+
+}
 
     private void setTripStatus(String newStatus) {
         if (firebaseUser != null) {
