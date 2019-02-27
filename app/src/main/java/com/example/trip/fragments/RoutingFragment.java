@@ -67,12 +67,6 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     private FloatingActionButton button;
     Trip trip;
     private NavigationView navigationView;
-    private RecyclerView notesRecyclerView;
-
-    /*double lat1, lng1, lat2, lng2;
-    Point destinationPoint;
-    Point originPoint;*/
-    private NotesAdapter notesAdapter;
 
     private boolean arrived;
     private boolean roundFinished;
@@ -104,7 +98,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         originPoint = Point.fromLngLat(lng1, lat1);*/
 
         navigationView = rootView.findViewById(R.id.navigation_view);
-        notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
+        RecyclerView notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
 
         arrived = false;
         roundFinished = false;
@@ -116,7 +110,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
             trip = (Trip) bundle.getSerializable("trip");
             if (trip != null) {
                 if (trip.getNotes() != null) {
-                    notesAdapter = new NotesAdapter(trip.getNotes(), getContext());
+                    NotesAdapter notesAdapter = new NotesAdapter(trip.getNotes(), getContext());
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                     notesRecyclerView.setAdapter(notesAdapter);
                     notesRecyclerView.setLayoutManager(linearLayoutManager);
@@ -242,25 +236,27 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     private void getRoute(TripLocation origin, TripLocation destination) {
         Point destinationPoint = Point.fromLngLat(destination.getLng(), destination.getLat());
         Point originPoint = Point.fromLngLat(origin.getLng(), origin.getLat());
-        NavigationRoute.builder(getContext())
-                .accessToken(Mapbox.getAccessToken())
-                .origin(originPoint)
-                .destination(destinationPoint)
-                .build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                        if (response.body() != null && response.body().routes().size() > 0) {
-                            directionsRoute = response.body().routes().get(0);
-                            startNavigation();
+        if (Mapbox.getAccessToken() != null) {
+            NavigationRoute.builder(getContext())
+                    .accessToken(Mapbox.getAccessToken())
+                    .origin(originPoint)
+                    .destination(destinationPoint)
+                    .build()
+                    .getRoute(new Callback<DirectionsResponse>() {
+                        @Override
+                        public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                            if (response.body() != null && response.body().routes().size() > 0) {
+                                directionsRoute = response.body().routes().get(0);
+                                startNavigation();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-                        Log.e(TAG, "Error: " + throwable.getMessage());
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                            Log.e(TAG, "Error: " + throwable.getMessage());
+                        }
+                    });
+        }
     }
 
     private void startNavigation() {
@@ -282,23 +278,16 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     public void onProgressChange(Location location, RouteProgress routeProgress) {
         //TODO handel it
         Log.i(TAG, "destance left" + routeProgress.fractionTraveled());
-        Log.i(TAG, "arrived:" + arrived);
-        Log.i(TAG, "is heading back:" + isHeadingBack);
-
-        Log.i(TAG, "roundFinished: " + roundFinished);
-        if (!arrived || (isHeadingBack && !roundFinished)) {
+        if (!arrived || !trip.getStatus().equals("d")) {
             if (routeProgress.fractionTraveled() > 0.95) {
-                Log.i(TAG, "arrived:" + arrived);
-                Log.i(TAG, "is heading back:" + isHeadingBack);
 
-                Log.i(TAG, "roundFinished: " + roundFinished);
                 arrived = true;
                 final Dialog dialog = new Dialog(getActivity());
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setCancelable(false);
 
-                if (trip.isRoundedTrip() && !isHeadingBack) {
-
+                if (trip.isRoundedTrip() && trip.getStatus().equals("u")) {
+                    Log.i(TAG, "trip.isRoundedTrip() && trip.getStatus().equals(\"u\")");
                     dialog.setContentView(R.layout.dialog_round_trip);
 
                     Button letsGoButton = dialog.findViewById(R.id.btn_lets_go);
@@ -308,7 +297,8 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            isHeadingBack = true;
+                            setTripStatus("h");
+                            arrived = false;
                             getRoute(trip.getEndPoint(), trip.getStartPoint());
                         }
                     });
@@ -318,8 +308,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                         public void onClick(View view) {
                             dialog.setContentView(R.layout.dialog_round_trip_pickers);
                             //TODO add to firebase and to the variable in the list
-                            trip.setStatus("h");
-                            tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("status").setValue("h");
+                            setTripStatus("h");
                             dialog.dismiss();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.fMain, new UpComingFragment());
@@ -330,11 +319,9 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                     });
 
                     dialog.show();
-                } else if (trip.isRoundedTrip() && arrived && isHeadingBack) {
-                    roundFinished = true;
-                } else if (!trip.isRoundedTrip() || (trip.isRoundedTrip() && isHeadingBack && roundFinished)) {
-                    //roundFinished = true;
-
+                } else if (!trip.isRoundedTrip() || trip.isRoundedTrip() && trip.getStatus().equals("h")) {
+                    Log.i(TAG, "!trip.isRoundedTrip() || trip.isRoundedTrip() && trip.getStatus().equals(\"h\")");
+                    setTripStatus("d");
                     dialog.setContentView(R.layout.dialog_trip_finished);
                     Button goToHomeButton = dialog.findViewById(R.id.btn_go_to_home_screen);
                     goToHomeButton.setOnClickListener(view -> {
@@ -347,7 +334,6 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
 
                     dialog.show();
                 }
-
                 //calculate trip speed
                 float speedSum = trip.getSpeedSum();
                 if (tripSpeeds.size() > 0) {
@@ -355,10 +341,12 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                         speedSum += speed;
                     }
                 }
-                tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedSum").setValue(speedSum);
-                tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedsCount").setValue(trip.getSpeedsCount() + tripSpeeds.size());
+                if (firebaseUser != null) {
+                    tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedSum").setValue(speedSum);
+                    tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedsCount").setValue(trip.getSpeedsCount() + tripSpeeds.size());
+                }
 
-            } else {
+            } else 
                 float speed = location.getSpeed();
                 if (speed != 0) {
                     //TODO add to firebase and to the variable in the list
@@ -367,5 +355,12 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
             }
         }
 
+    }
+
+    private void setTripStatus(String newStatus) {
+        if (firebaseUser != null) {
+            trip.setStatus(newStatus);
+            tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("status").setValue(newStatus);
+        }
     }
 }

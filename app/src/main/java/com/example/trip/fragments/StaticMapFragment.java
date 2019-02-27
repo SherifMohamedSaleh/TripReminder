@@ -11,17 +11,11 @@ import android.view.ViewGroup;
 
 import com.example.trip.R;
 import com.example.trip.models.Trip;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.api.directions.v5.DirectionsCriteria;
-import com.mapbox.api.directions.v5.MapboxDirections;
-import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
-import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -32,22 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import timber.log.Timber;
-
-// classes needed to launch navigation UI
-
-// classes to calculate a route
-
 public class StaticMapFragment extends Fragment implements OnMapReadyCallback {
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private static final String TAG = "DirectionsActivity";
     private MapView mapView;
-    private MapboxMap mapboxMap;
-    private PermissionsManager permissionsManager;
-    private LocationComponent locationComponent;
     // variables for calculating and drawing a route
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
@@ -67,7 +49,6 @@ public class StaticMapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
-        this.mapboxMap = mapboxMap;
         mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
@@ -92,7 +73,7 @@ public class StaticMapFragment extends Fragment implements OnMapReadyCallback {
                         mapboxMap.addPolyline(new PolylineOptions()
                                 .addAll(polylinePoints)
                                 .color(Color.rgb(r, g, b))
-                                .width(2));
+                                .width(3));
 
                     }
                 }
@@ -159,49 +140,6 @@ public class StaticMapFragment extends Fragment implements OnMapReadyCallback {
     public void onDestroyView() {
         super.onDestroyView();
         mapView.onDestroy();
-    }
-
-    private void getRoute(Point origin, Point destination) {
-
-        MapboxDirections client = MapboxDirections.builder()
-                .origin(origin)
-                .destination(destination)
-                .overview(DirectionsCriteria.OVERVIEW_FULL)
-                .profile(DirectionsCriteria.PROFILE_DRIVING)
-                .accessToken(MAPBOX_ACCESS_TOKEN)
-                .build();
-
-        client.enqueueCall(new Callback<DirectionsResponse>() {
-            @Override
-            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                System.out.println(call.request().url().toString());
-
-// You can get the generic HTTP info about the response
-                Timber.d("Response code: " + response.code());
-                if (response.body() == null) {
-                    Timber.e("No routes found, make sure you set the right user and access token.");
-                    return;
-                } else if (response.body().routes().size() < 1) {
-                    Timber.e("No routes found");
-                    return;
-                }
-
-// Get the directions route
-                currentRoute = response.body().routes().get(0);
-
-// Make a toast which displays the route's distance
-
-                //mapboxV
-
-            }
-
-            @Override
-            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
-
-            }
-        });
-
-
     }
 
 }

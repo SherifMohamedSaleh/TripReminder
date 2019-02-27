@@ -47,7 +47,6 @@ public class PastTripsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_past_trips, container, false);
         viewOnMapButton = rootView.findViewById(R.id.fab_view_on_map);
         rv = rootView.findViewById(R.id.rv);
-        rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         final RecyclerAdapter adapter = new RecyclerAdapter(getContext(), tripDataList);
         rv.setAdapter(adapter);
