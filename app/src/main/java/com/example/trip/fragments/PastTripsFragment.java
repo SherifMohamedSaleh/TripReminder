@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.trip.R;
-import com.example.trip.activities.HomeNavigationActivity;
 import com.example.trip.adapters.RecyclerAdapter;
 import com.example.trip.models.Trip;
 import com.google.firebase.database.ChildEventListener;
@@ -49,7 +48,7 @@ public class PastTripsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         navigationView = getActivity().findViewById(R.id.nav_view);
-        View rootView=inflater.inflate(R.layout.fragment_past_trips, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_past_trips, container, false);
         rv = (RecyclerView) rootView.findViewById(R.id.rv);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -67,7 +66,7 @@ public class PastTripsFragment extends Fragment {
                     if (trip != null) {
 
                         Log.e("AllTripsActivity", "onCreate: " + "add to list");
-                        if(trip.getStatus().equals("d")) {
+                        if (trip.getStatus().equals("d")) {
                             tripDataList.add(trip);
                             adapter.notifyDataSetChanged();
                             Log.e("AllTripsActivity", "onCreate: " + tripDataList.size());
@@ -99,13 +98,14 @@ public class PastTripsFragment extends Fragment {
         }
         return rootView;
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        FragmentManager fm=getFragmentManager();
-        FragmentTransaction ft= fm.beginTransaction();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
         navigationView.setCheckedItem(R.id.nav_home);
-        ft.replace(R.id.fMain,new UpComingFragment());
+        ft.replace(R.id.fMain, new UpComingFragment());
         ft.commit();
     }
 }

@@ -1,9 +1,11 @@
 package com.example.trip.models;
 
+import java.io.Serializable;
+
 /**
  * Created by Toka on 2019-02-17.
  */
-public class TripDate {
+public class TripDate implements Serializable {
     private int day;
     private int month;
     private int year;

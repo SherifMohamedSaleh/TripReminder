@@ -1,9 +1,11 @@
 package com.example.trip.models;
 
+import java.io.Serializable;
+
 /**
  * Created by Toka on 2019-02-17.
  */
-public class TripTime {
+public class TripTime implements Serializable {
     private int hour;
     private int minute;
 

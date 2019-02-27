@@ -14,8 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -189,11 +187,12 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
 
                 trip.setRoundedTrip(isRoundedSwitch.isChecked());
 
-                int m = startAlarm(calender);
-
-                trip.setTripRequestId(m);
                 String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
                 trip.setId(key);
+                int id = (int) System.currentTimeMillis();
+                trip.setTripRequestId(id);
+                startAlarm(calender, id);
+
                 tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip);
 
 
@@ -204,30 +203,23 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private int startAlarm(Calendar calendar) {
+    private void startAlarm(Calendar calendar, int x) {
 
         Log.i(TAG, "StartAlarm  hours: " + calendar.get(calendar.HOUR) + " minutes: " + calendar.get(calendar.MINUTE));
         Log.i(TAG, "StartAlarm  Year: " + calendar.get(calendar.YEAR) + " Month: " + calendar.get(calendar.MONTH) + " Day" + calendar.get(calendar.DAY_OF_MONTH));
 
 
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        int x = (int) System.currentTimeMillis();// Calendar.getInstance().getTimeInMillis();
+        //  int x = (int) System.currentTimeMillis();// Calendar.getInstance().getTimeInMillis();
         Intent intent = new Intent(getContext(), AlertReceiver.class);
-        // intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        intent.putExtra("id", x);
-        Log.i("AlertReceiver", "id" + x);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), x, intent, 0);
-
+        intent.putExtra("TripID", trip.getId());
+        Log.i(TAG, "startAlarm: " + trip.getId());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), x, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         if (calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
         }
-
-
-        //1551027300469
-
         alarmManager.setExact(alarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         Log.i(TAG, "startAlarm:      Alerm Added " + calendar.getTimeInMillis());
-        return x;
     }
 
     @Override
@@ -241,19 +233,16 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
             CarmenFeature feature = PlaceAutocomplete.getPlace(data);
             endPointTextView.setText(feature.text());
             trip.setEndPoint(new TripLocation(feature.center().latitude(), feature.center().longitude(), feature.text()));
+        }
+    }
 
-        }
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        FragmentManager fm=getFragmentManager();
-        FragmentTransaction ft= fm.beginTransaction();
-        for(int i=0;i<fm.getBackStackEntryCount();i++)
-        {
-            fm.popBackStack();
-        }
-        ft.replace(R.id.fMain,new UpComingFragment());
-        ft.commit();
-    }
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        FragmentManager fm = getFragmentManager();
+//        FragmentTransaction ft = fm.beginTransaction();
+//       // ((NavigationView) getActivity().findViewById(R.id.nav_view)).setCheckedItem(R.id.nav_home);
+//        ft.replace(R.id.fMain, new UpComingFragment());
+//        ft.commit();
+//    }
 }

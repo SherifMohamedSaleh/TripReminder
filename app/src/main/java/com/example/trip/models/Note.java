@@ -1,9 +1,11 @@
 package com.example.trip.models;
 
+import java.io.Serializable;
+
 /**
  * Created by Toka on 2019-02-18.
  */
-public class Note {
+public class Note implements Serializable {
     private String name;
     private boolean isChecked;
 
