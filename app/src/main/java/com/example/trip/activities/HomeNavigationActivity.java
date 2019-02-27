@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,6 +22,8 @@ import com.example.trip.models.Trip;
 
 public class HomeNavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = "HomeNavigationActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,20 +42,37 @@ public class HomeNavigationActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.addToBackStack(null);
-        if (getIntent().getExtras().getSerializable("Trip") != null) {
-            Trip trip = (Trip) getIntent().getExtras().getSerializable("Trip");
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("trip", trip);
-            RoutingFragment fragment = new RoutingFragment();
-            fragment.setArguments(bundle);
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().getSerializable("Trip") != null) {
+                Trip trip = (Trip) getIntent().getExtras().getSerializable("Trip");
+                Log.i(TAG, "onCreate: trip name" + trip.getTripName());
+                Log.i(TAG, "onCreate: trip ID" + trip.getId());
+                Log.i(TAG, "onCreate:  End Point" + trip.getEndPoint().getAddress());
+                Log.i(TAG, "onCreate: Start Point" + trip.getStartPoint().getAddress());
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("trip", trip);
+//                RoutingFragment fragment = new RoutingFragment();
+//                fragment.setArguments(bundle);
+//
+//                ft.replace(R.id.fMain, new RoutingFragment());
 
-            ft.replace(R.id.fMain, new RoutingFragment());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("trip", trip);
+                RoutingFragment fragment = new RoutingFragment();
+                fragment.setArguments(bundle);
+                //    FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.fMain, fragment);
+                ft.commit();
 
+            }
         } else {
             ft.replace(R.id.fMain, new UpComingFragment());
+            ft.commit();
         }
-        ft.commit();
+
         navigationView.setCheckedItem(R.id.nav_home);
+
     }
 
     @Override

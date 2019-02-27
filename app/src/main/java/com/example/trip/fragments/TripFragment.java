@@ -291,8 +291,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         Log.i(TAG, "startAlarm: " + x);
         Intent intent = new Intent(getContext(), AlertReceiver.class);
         //   intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        intent.putExtra("id", x);
-        Log.i("AlertReceiver", "id" + x);
+        intent.putExtra("TripID", trip.getId());
+        Log.i("AlertReceiver", "TripID" + x);
         //  trip.setTripRequestId(id);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), x, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

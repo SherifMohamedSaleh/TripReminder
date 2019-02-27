@@ -34,7 +34,6 @@
         </activity>
         <activity android:name=".activities.TempAddTripActivity" />
         <activity android:name=".activities.TempRoutingActivity" />
-        <activity android:name=".activities.TempGoogleNavigationAcitivy" />
 
         <receiver
             android:name=".utils.AlertReceiver"
