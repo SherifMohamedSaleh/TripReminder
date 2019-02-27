@@ -63,9 +63,9 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     // variables for calculating and drawing a route
     private DirectionsRoute currentRoute;
     private NavigationMapRoute navigationMapRoute;
-    Trip trip;
     // variables needed to initialize navigation
     private FloatingActionButton button;
+    Trip trip;
     private NavigationView navigationView;
 
     private boolean arrived;
@@ -276,86 +276,79 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
 
     @Override
     public void onProgressChange(Location location, RouteProgress routeProgress) {
-        //TODO handel it
-        Log.i(TAG, "destance left" + routeProgress.fractionTraveled());
-        if (!arrived || !trip.getStatus().equals("d")) {
-            if (routeProgress.fractionTraveled() > 0.95) {
-
-                arrived = true;
-                final Dialog dialog = new Dialog(getActivity());
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setCancelable(false);
-
-                if (trip.isRoundedTrip() && trip.getStatus().equals("u")) {
-                    Log.i(TAG, "trip.isRoundedTrip() && trip.getStatus().equals(\"u\")");
-                    dialog.setContentView(R.layout.dialog_round_trip);
-
-                    Button letsGoButton = dialog.findViewById(R.id.btn_lets_go);
-                    Button laterButton = dialog.findViewById(R.id.btn_later);
-
-                    letsGoButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                            setTripStatus("h");
-                            arrived = false;
-                            getRoute(trip.getEndPoint(), trip.getStartPoint());
-                        }
-                    });
-
-                    laterButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.setContentView(R.layout.dialog_round_trip_pickers);
-                            //TODO add to firebase and to the variable in the list
-                            setTripStatus("h");
-                            dialog.dismiss();
-                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.fMain, new UpComingFragment());
-                            ft.addToBackStack(null);
-                            ft.commit();
-
-                        }
-                    });
-
-                    dialog.show();
-                } else if (!trip.isRoundedTrip() || trip.isRoundedTrip() && trip.getStatus().equals("h")) {
-                    Log.i(TAG, "!trip.isRoundedTrip() || trip.isRoundedTrip() && trip.getStatus().equals(\"h\")");
-                    setTripStatus("d");
-                    dialog.setContentView(R.layout.dialog_trip_finished);
-                    Button goToHomeButton = dialog.findViewById(R.id.btn_go_to_home_screen);
-                    goToHomeButton.setOnClickListener(view -> {
-                        dialog.dismiss();
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.fMain, new UpComingFragment());
-                        ft.addToBackStack(null);
-                        ft.commit();
-                    });
-
-                    dialog.show();
-                }
-                //calculate trip speed
-                float speedSum = trip.getSpeedSum();
-                if (tripSpeeds.size() > 0) {
-                    for (float speed : tripSpeeds) {
-                        speedSum += speed;
-                    }
-                }
-                if (firebaseUser != null) {
-                    tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedSum").setValue(speedSum);
-                    tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("speedsCount").setValue(trip.getSpeedsCount() + tripSpeeds.size());
-                }
-
-            } else
-                float speed = location.getSpeed();
-            if (speed != 0) {
-                //TODO add to firebase and to the variable in the list
-                tripSpeeds.add(speed);
+        if (routeProgress.fractionTraveled() > 0.96 && !arrived) {
+            arrived = true;
+            if (!trip.isRoundedTrip()) {
+                showGoToHomeDialog();
+                setTripStatus("d");
+            } else if (trip.isRoundedTrip() && trip.getStatus().equals("u")) {
+                showOptionsDialog();
+            } else if (trip.isRoundedTrip() && trip.getStatus().equals("h")) {
+                //only half the trip is finished
+                arrived = false;
+                setTripStatus("d");
+                getRoute(trip.getEndPoint(), trip.getStartPoint());
+            } else if (trip.isRoundedTrip() && trip.getStatus().equals("d")) {
+                showGoToHomeDialog();
             }
+
         }
     }
 
-}
+    private void showOptionsDialog() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+
+        dialog.setContentView(R.layout.dialog_round_trip);
+
+        Button letsGoButton = dialog.findViewById(R.id.btn_lets_go);
+        Button laterButton = dialog.findViewById(R.id.btn_later);
+
+        letsGoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                setTripStatus("h");
+                arrived = false;
+                getRoute(trip.getEndPoint(), trip.getStartPoint());
+            }
+        });
+
+        laterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.setContentView(R.layout.dialog_round_trip_pickers);
+                //TODO add to firebase and to the variable in the list
+                setTripStatus("h");
+                dialog.dismiss();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fMain, new UpComingFragment());
+                ft.addToBackStack(null);
+                ft.commit();
+
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void showGoToHomeDialog() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_trip_finished);
+        Button goToHomeButton = dialog.findViewById(R.id.btn_go_to_home_screen);
+        goToHomeButton.setOnClickListener(view -> {
+            dialog.dismiss();
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fMain, new UpComingFragment());
+            ft.addToBackStack(null);
+            ft.commit();
+        });
+
+        dialog.show();
+    }
 
     private void setTripStatus(String newStatus) {
         if (firebaseUser != null) {
