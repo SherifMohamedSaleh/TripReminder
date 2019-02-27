@@ -21,6 +21,7 @@ import com.example.trip.utils.FirebaseReferences;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,6 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_up_coming, container, false);
-
         rv = (RecyclerView) rootView.findViewById(R.id.rv);
         addNewTripButton = rootView.findViewById(R.id.fab_add_trip);
         rv.setHasFixedSize(true);
@@ -54,6 +54,7 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
         if (firebaseUser != null) {
             Log.e("AllTripsActivity", "onCreate: " + firebaseUser.getUid());
+            tripsRef.keepSynced(true);
             tripsRef.child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {

@@ -15,4 +15,5 @@ public interface FirebaseReferences {
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
+
 }

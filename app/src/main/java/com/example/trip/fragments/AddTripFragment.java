@@ -74,9 +74,6 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_trip, container, false);
 
-        database.setPersistenceEnabled(true);
-        tripsRef.keepSynced(true);
-
         tripNameEditText = rootView.findViewById(R.id.et_trip_name);
         timeButton = rootView.findViewById(R.id.btn_trip_time);
         dateButton = rootView.findViewById(R.id.btn_trip_date);
@@ -250,13 +247,5 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        FragmentManager fm=getFragmentManager();
-        FragmentTransaction ft= fm.beginTransaction();
-        for(int i=0;i<fm.getBackStackEntryCount();i++)
-        {
-            fm.popBackStack();
-        }
-        ft.replace(R.id.fMain,new UpComingFragment());
-        ft.commit();
     }
 }

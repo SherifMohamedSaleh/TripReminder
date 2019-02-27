@@ -65,7 +65,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     TextView tripStatus;
     CheckBox doneCheckBox;
     ImageView tripImage;
-    Boolean editMode = true;
+    Boolean editMode = false;
     Drawable draw;
     Trip trip;
 
@@ -147,8 +147,6 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         if(editMode)
         {
 
-
-            Log.i(TAG, "onCreateView:      hhhhhhhhhhhhhheeeeeeeeeeeeelllllllllllllllllloooooooooooooooooooooo");
             tripTime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
