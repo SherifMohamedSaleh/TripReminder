@@ -39,6 +39,13 @@
     <string name="start_point">Start Point</string>
     <string name="end_point">End Point</string>
     <string name="rounded_trip">Rounded Trip</string>
+    <string name="you_have_arrived_at_you_destination">You have arrived at you destination</string>
+    <string name="return_now">return Now</string>
+    <string name="lets_go">Let\'s go</string>
+    <string name="ok">Ok</string>
+    <string name="later">Later</string>
+    <string name="when_do_you_want_to_return">When do you want to return?</string>
+    <string name="go_to_home_screen">Go to home screen</string>
 </resources>
 
 

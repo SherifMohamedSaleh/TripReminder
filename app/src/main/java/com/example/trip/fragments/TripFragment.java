@@ -60,8 +60,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
 //    FloatingActionButton editTrip,startTrip,saveTrip;
 //    Button notesBtn,roundedBtn , tripDate , tripTime;
     EditText tripName, tripDate, tripTime, tripSource, tripDest;
-    FloatingActionButton editTrip,startTrip,saveTrip;
-    Button notesBtn,roundedBtn;
+    FloatingActionButton editTrip, startTrip, saveTrip;
+    Button notesBtn, roundedBtn;
     TextView tripStatus;
     CheckBox doneCheckBox;
     ImageView tripImage;
@@ -77,49 +77,44 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view=inflater.inflate(R.layout.fragment_trip, container, false);
-        tripName=view.findViewById(R.id.tripNameVal);
-        tripStatus=view.findViewById(R.id.tripStatusVal);
-        tripDate=view.findViewById(R.id.tripDateVal);
-        tripTime=view.findViewById(R.id.tripTimeVal);
-        tripSource=view.findViewById(R.id.tripSourceVal);
-        tripDest=view.findViewById(R.id.tripDestVal);
-        doneCheckBox=view.findViewById(R.id.doneCheckBox);
-        notesBtn=view.findViewById(R.id.notesBtn);
-        roundedBtn=view.findViewById(R.id.startRoundBtn);
-        editTrip=view.findViewById(R.id.editTripBtn);
-        saveTrip=view.findViewById(R.id.saveTripBtn);
-        startTrip=view.findViewById(R.id.startTripBtn);
-        draw=tripName.getBackground();
+        View view = inflater.inflate(R.layout.fragment_trip, container, false);
+        tripName = view.findViewById(R.id.tripNameVal);
+        tripStatus = view.findViewById(R.id.tripStatusVal);
+        tripDate = view.findViewById(R.id.tripDateVal);
+        tripTime = view.findViewById(R.id.tripTimeVal);
+        tripSource = view.findViewById(R.id.tripSourceVal);
+        tripDest = view.findViewById(R.id.tripDestVal);
+        doneCheckBox = view.findViewById(R.id.doneCheckBox);
+        notesBtn = view.findViewById(R.id.notesBtn);
+        roundedBtn = view.findViewById(R.id.startRoundBtn);
+        editTrip = view.findViewById(R.id.editTripBtn);
+        saveTrip = view.findViewById(R.id.saveTripBtn);
+        startTrip = view.findViewById(R.id.startTripBtn);
+        draw = tripName.getBackground();
         tripName.setText(trip.getTripName());
 
-        if(trip.getStatus().equals("d"))
-        {
+        if (trip.getStatus().equals("d")) {
             tripStatus.setText("Completed");
             doneCheckBox.setChecked(true);
-        }
-        else if(trip.getStatus().equals("u"))
-        {
+        } else if (trip.getStatus().equals("u")) {
             tripStatus.setText("Upcoming");
             doneCheckBox.setChecked(false);
-        } else if (trip.getStatus().equals("c"))
-        {
+        } else if (trip.getStatus().equals("c")) {
             tripStatus.setText("Cancelled");
             doneCheckBox.setChecked(false);
         }
-        if(trip.isRoundedTrip())
-        {
+        if (trip.isRoundedTrip()) {
             roundedBtn.setVisibility(View.VISIBLE);
         }
-        tripDate.setText(Integer.toString(trip.getDate().getDay())+"/"+Integer.toString(trip.getDate().getMonth())+"/"+Integer.toString(trip.getDate().getYear()));
-        tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
-        tripSource.setText("• "+trip.getStartPoint().getAddress());
-        tripDest.setText("• "+trip.getEndPoint().getAddress());
+        tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
+        tripTime.setText(Integer.toString(trip.getTime().getHour()) + ":" + Integer.toString(trip.getTime().getMinute()));
+        tripSource.setText("• " + trip.getStartPoint().getAddress());
+        tripDest.setText("• " + trip.getEndPoint().getAddress());
 
         editTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editMode=true;
+                editMode = true;
                 saveTrip.setVisibility(View.VISIBLE);
                 editTrip.setVisibility(View.INVISIBLE);
                 tripName.setFocusable(true);
@@ -144,8 +139,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 tripDest.setBackgroundDrawable(draw);
             }
         });
-        if(editMode)
-        {
+        if (editMode) {
 
 
             Log.i(TAG, "onCreateView:      hhhhhhhhhhhhhheeeeeeeeeeeeelllllllllllllllllloooooooooooooooooooooo");
@@ -212,8 +206,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                     startActivityForResult(intent, REQUEST_CODE_END_AUTOCOMPLETE);
                 }
             });
-        }
-        else {
+        } else {
             tripName.setFocusable(false);
             tripName.setClickable(false);
             tripName.setFocusableInTouchMode(false);
@@ -240,7 +233,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         saveTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editMode=false;
+                editMode = false;
 
                 saveTrip.setVisibility(View.INVISIBLE);
                 editTrip.setVisibility(View.VISIBLE);
@@ -277,12 +270,12 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         notesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NoteFragment noteFragment=new NoteFragment();
+                NoteFragment noteFragment = new NoteFragment();
                 noteFragment.setTrip(trip);
-                FragmentManager fm=getFragmentManager();
-                FragmentTransaction ft= fm.beginTransaction();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
                 ft.addToBackStack(null);
-                ft.replace(R.id.fMain,noteFragment,"tripFragmentTag");
+                ft.replace(R.id.fMain, noteFragment, "tripFragmentTag");
                 ft.commit();
             }
         });
@@ -342,8 +335,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         }
     }
 
-    public void setTrip(Trip trip)
-    {
-        this.trip=trip;
+    public void setTrip(Trip trip) {
+        this.trip = trip;
     }
 }
