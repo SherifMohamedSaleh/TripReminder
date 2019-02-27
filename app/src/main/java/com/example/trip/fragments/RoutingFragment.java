@@ -279,16 +279,20 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         if (routeProgress.fractionTraveled() > 0.96 && !arrived) {
             arrived = true;
             if (!trip.isRoundedTrip()) {
+                Log.i(TAG, "!trip.isRoundedTrip()&&!arrived");
                 showGoToHomeDialog();
                 setTripStatus("d");
             } else if (trip.isRoundedTrip() && trip.getStatus().equals("u")) {
+                Log.i(TAG, "trip.isRoundedTrip() && trip.getStatus().equals(\"u\")");
                 showOptionsDialog();
             } else if (trip.isRoundedTrip() && trip.getStatus().equals("h")) {
                 //only half the trip is finished
+                Log.i(TAG, "trip.isRoundedTrip() && trip.getStatus().equals(\"h\")");
                 arrived = false;
                 setTripStatus("d");
                 getRoute(trip.getEndPoint(), trip.getStartPoint());
             } else if (trip.isRoundedTrip() && trip.getStatus().equals("d")) {
+                Log.i(TAG, "trip.isRoundedTrip() && trip.getStatus().equals(\"d\")");
                 showGoToHomeDialog();
             }
 
