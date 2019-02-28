@@ -1,11 +1,11 @@
 package com.example.trip.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.trip.R;
+import com.example.trip.activities.TempAddTripActivity;
 import com.example.trip.adapters.RecyclerAdapter;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
@@ -29,7 +30,6 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
     RecyclerView rv;
     FloatingActionButton addNewTripButton;
-
     List<Trip> tripDataList = new ArrayList<>();
 
     @Override
@@ -43,7 +43,6 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_up_coming, container, false);
-
         rv = (RecyclerView) rootView.findViewById(R.id.rv);
         addNewTripButton = rootView.findViewById(R.id.fab_add_trip);
         rv.setHasFixedSize(true);
@@ -54,6 +53,7 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
         if (firebaseUser != null) {
             Log.e("AllTripsActivity", "onCreate: " + firebaseUser.getUid());
+            tripsRef.keepSynced(true);
             tripsRef.child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -103,10 +103,8 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
         addNewTripButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fMain, new AddTripFragment());
-                ft.addToBackStack(null);
-                ft.commit();
+
+                startActivity(new Intent(getContext(), TempAddTripActivity.class));
             }
         });
         return rootView;
@@ -118,6 +116,3 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
         tripDataList.clear();
     }
 }
-
-
-

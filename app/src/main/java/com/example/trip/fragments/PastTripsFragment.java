@@ -51,6 +51,7 @@ public class PastTripsFragment extends Fragment {
         final RecyclerAdapter adapter = new RecyclerAdapter(getContext(), tripDataList);
         rv.setAdapter(adapter);
         if (firebaseUser != null) {
+            tripsRef.keepSynced(true);
             // DatabaseReference userRef=tripsRef.child(firebaseUser.getUid());
             Log.e("AllTripsActivity", "onCreate: " + firebaseUser.getUid());
             tripsRef.child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {

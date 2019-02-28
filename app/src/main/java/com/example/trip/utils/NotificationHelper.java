@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.example.trip.R;
 import com.example.trip.activities.Dialog;
+import com.example.trip.activities.HomeNavigationActivity;
 import com.example.trip.models.Trip;
 
 import java.io.Serializable;
@@ -37,6 +38,11 @@ public class NotificationHelper extends ContextWrapper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel();
         }
+
+//        else{
+//            sendNotification();
+//
+//        }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -74,4 +80,25 @@ public class NotificationHelper extends ContextWrapper {
 
 
     }
+
+    public void sendNotification() {
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(android.R.drawable.ic_dialog_alert);
+        Intent intent = new Intent(base, HomeNavigationActivity.class);
+        intent.putExtra("TripID", (Serializable) trip.getId());
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, trip.getTripRequestId(), intent, 0);
+        builder.setContentIntent(pendingIntent);
+        builder.setContentTitle(trip.getTripName());
+        builder.setContentText("Your notification content here.");
+        builder.setSubText("Tap to view the website.");
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(1, builder.build());
+    }
+
+
+
+
 }

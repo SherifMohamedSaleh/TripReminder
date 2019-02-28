@@ -1,6 +1,9 @@
 package com.example.trip.adapters;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
@@ -17,16 +20,20 @@ import com.example.trip.R;
 import com.example.trip.fragments.RoutingFragment;
 import com.example.trip.fragments.TripFragment;
 import com.example.trip.models.Trip;
+import com.example.trip.utils.AlertReceiver;
+import com.example.trip.utils.FirebaseReferences;
 
 import java.util.List;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ProductViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ProductViewHolder> implements FirebaseReferences {
     private List<Trip> tripDataList;
     private Context context;
+    Trip tripData;
 
     public RecyclerAdapter(Context context, List<Trip> tripDataList) {
         this.tripDataList = tripDataList;
         this.context = context;
+
     }
 
     @NonNull
@@ -40,10 +47,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, final int position) {
 
-        final Trip tripData = tripDataList.get(position);
+        tripData = tripDataList.get(position);
         holder.textOne.setText(tripData.getTripName());
-        holder.textTwo.setText("sat");
-        holder.textThree.setText("10:30");
+        holder.textTwo.setText(tripData.getDate().getDay() + "/" + (tripData.getDate().getMonth() + 1) + "At" + tripData.getTime().getHour() + ":" + tripData.getTime().getMinute());
         // holder.textFour.setText(tripData.getDate()+"");
         //   holder.textFive.setText(tripData.getTripType()+"");
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +79,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
             }
         });
 
+        holder.deleteTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tripDataList.remove(position);
+                tripsRef.child(firebaseUser.getUid()).child(tripData.getId()).removeValue();
+                notifyItemRemoved(position);
+            }
+        });
+
+    }
+
+    private void cancelAlarm() {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlertReceiver.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, tripData.getTripRequestId(), intent, 0);
+
+        pendingIntent.getCreatorUid();
+        alarmManager.cancel(pendingIntent);
+
     }
 
     @Override
@@ -87,9 +113,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
 
     class ProductViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textOne, textTwo, textThree, textFour, textFive;
+        TextView textOne, textTwo, textFour, textFive;
         CardView cardView;
         ImageButton startTripButton;
+        ImageButton deleteTrip;
 
 
         public ProductViewHolder(View itemView) {
@@ -97,12 +124,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
 
             textOne = itemView.findViewById(R.id.textOne);
             textTwo = itemView.findViewById(R.id.textTwo);
-            textThree = itemView.findViewById(R.id.textThree);
             //     textFour = itemView.findViewById(R.id.textFour);
             //   textFive = itemView.findViewById(R.id.textFive);
             cardView = (CardView) itemView.findViewById(R.id.cardview_id);
 
             startTripButton = itemView.findViewById(R.id.btn_start_trip);
+
+            deleteTrip = itemView.findViewById(R.id.deleteTripBtn);
         }
     }
 }
