@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import com.example.trip.R;
 import com.example.trip.fragments.PastTripsFragment;
 import com.example.trip.fragments.RoutingFragment;
-import com.example.trip.fragments.SettingsFragment;
 import com.example.trip.fragments.UpComingFragment;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
@@ -113,13 +112,6 @@ public class HomeNavigationActivity extends AppCompatActivity
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.addToBackStack(null);
             ft.replace(R.id.fMain, new PastTripsFragment());
-            ft.commit();
-        } else if (id == R.id.nav_sync) {
-
-        } else if (id == R.id.nav_settings) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.addToBackStack(null);
-            ft.replace(R.id.fMain, new SettingsFragment());
             ft.commit();
         } else if (id == R.id.nav_logout) {
 
