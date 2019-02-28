@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trip.R;
@@ -71,6 +72,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     private NavigationMapRoute navigationMapRoute;
     // variables needed to initialize navigation
     private FloatingActionButton button;
+    private TextView noNotesTextView;
     Trip trip;
     private NavigationView navigationView;
 
@@ -105,6 +107,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         rootView = inflater.inflate(R.layout.fragment_routing, container, false);
         navigationView = rootView.findViewById(R.id.navigation_view);
         notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
+        noNotesTextView = rootView.findViewById(R.id.tv_not_notes);
 
         arrived = false;
         roundFinished = false;
@@ -123,11 +126,14 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         if (bundle != null) {
             trip = (Trip) bundle.getSerializable("trip");
             if (trip != null) {
-                if (trip.getNotes() != null) {
+                if (trip.getNotes() != null || trip.getNotes().size() <= 0) {
+                    noNotesTextView.setVisibility(View.INVISIBLE);
                     NotesAdapter notesAdapter = new NotesAdapter(trip.getNotes(), getContext());
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                     notesRecyclerView.setAdapter(notesAdapter);
                     notesRecyclerView.setLayoutManager(linearLayoutManager);
+                } else {
+                    noNotesTextView.setVisibility(View.VISIBLE);
                 }
                 navigationView.onCreate(savedInstanceState);
                 navigationView.initialize(this);
