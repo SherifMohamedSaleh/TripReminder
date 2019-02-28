@@ -41,7 +41,6 @@ public class HomeNavigationActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().getSerializable("Trip") != null) {
                 Trip trip = (Trip) getIntent().getExtras().getSerializable("Trip");
@@ -61,7 +60,6 @@ public class HomeNavigationActivity extends AppCompatActivity
                 RoutingFragment fragment = new RoutingFragment();
                 fragment.setArguments(bundle);
                 //    FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-                ft.addToBackStack(null);
                 ft.replace(R.id.fMain, fragment);
                 ft.commit();
 

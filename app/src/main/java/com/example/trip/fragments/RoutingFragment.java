@@ -1,13 +1,18 @@
 package com.example.trip.fragments;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -55,6 +60,7 @@ import retrofit2.Response;
 
 public class RoutingFragment extends Fragment implements OnNavigationReadyCallback, NavigationListener, PermissionsListener, ProgressChangeListener, FirebaseReferences {
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
+    private static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
     private static final String TAG = "DirectionsActivity";
     DirectionsRoute directionsRoute;
     private MapboxMap mapboxMap;
@@ -74,6 +80,12 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
 
     private ArrayList<Float> tripSpeeds;
 
+    RecyclerView notesRecyclerView;
+
+    Bundle savedInstanceState;
+
+    View rootView;
+
 
     public RoutingFragment() {
         // Required empty public constructor
@@ -89,22 +101,55 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Mapbox.getInstance(getContext(), MAPBOX_ACCESS_TOKEN);
-        View rootView = inflater.inflate(R.layout.fragment_routing, container, false);
-        /*lat1 = 31.2111877; //29.91667
-        lng1 = 29.9245365; //31.2
-        lat2 = 31.210574; //31.23944
-        lng2 = 29.924665; //30.05611
-        destinationPoint = Point.fromLngLat(lng2, lat2);
-        originPoint = Point.fromLngLat(lng1, lat1);*/
-
+        rootView = inflater.inflate(R.layout.fragment_routing, container, false);
         navigationView = rootView.findViewById(R.id.navigation_view);
-        RecyclerView notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
+        notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
 
         arrived = false;
         roundFinished = false;
         isHeadingBack = false;
         tripSpeeds = new ArrayList<>();
 
+        this.savedInstanceState = savedInstanceState;
+
+        /*int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (!checkIfAlreadyhavePermission()) {
+                requestForSpecificPermission();
+            }
+        }
+
+        int permissionCheck = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.READ_PHONE_STATE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_PHONE_STATE)) {
+                showExplanation("Permission Needed", "Rationale", Manifest.permission.READ_PHONE_STATE, REQUEST_PERMISSION_PHONE_STATE);
+            } else {
+                requestPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PERMISSION_PHONE_STATE);
+            }
+        } else {
+            Toast.makeText(MainActivity.this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
+        }*/
+        startTrip();
+
+        return rootView;
+    }
+
+    private boolean checkIfAlreadyhavePermission() {
+        int result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void requestForSpecificPermission() {
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.GET_ACCOUNTS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+    }
+
+    private void startTrip() {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             trip = (Trip) bundle.getSerializable("trip");
@@ -119,7 +164,6 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                 navigationView.initialize(this);
             }
         }
-        return rootView;
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -137,11 +181,6 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(getActivity());
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -248,6 +287,8 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                             if (response.body() != null && response.body().routes().size() > 0) {
                                 directionsRoute = response.body().routes().get(0);
                                 startNavigation();
+                            } else {
+                                Snackbar.make(rootView, "Couldn't find route", Snackbar.LENGTH_INDEFINITE).show();
                             }
                         }
 
@@ -360,4 +401,25 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
             tripsRef.child(firebaseUser.getUid()).child(trip.getId()).child("status").setValue(newStatus);
         }
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        showGoToHomeDialog();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startTrip();
+            } else {
+                Toast.makeText(getContext(), "We need location permission", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
 }

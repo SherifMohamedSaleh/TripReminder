@@ -65,7 +65,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="141dp"
                 android:layout_marginTop="66dp"
-                android:src="@drawable/alarm" />
+                android:src="@drawable/clock" />
 
 
             <TextView

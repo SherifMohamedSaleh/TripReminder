@@ -65,7 +65,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     TextView tripStatus;
     CheckBox doneCheckBox;
     ImageView tripImage;
-    Boolean editMode = true;
+    Boolean editMode = false;
     Drawable draw;
     Trip trip;
 
@@ -306,20 +306,6 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         Log.i("AlertReceiver", "startAlarm:     Alerm updated " + calendar.getTimeInMillis());
 
     }
-
-    private void cancelAlarm() {
-        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
-        Intent intent = new Intent(getContext(), AlertReceiver.class);
-        //x = Integer.parseInt(request.getText().toString());
-        int x = trip.getTripRequestId();
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), x, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        pendingIntent.getCreatorUid();
-        alarmManager.cancel(pendingIntent);
-
-        Log.i(TAG, "cancelAlarm:  cancel Alarm");
-    }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
