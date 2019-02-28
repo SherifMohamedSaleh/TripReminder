@@ -85,6 +85,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     Bundle savedInstanceState;
 
     View rootView;
+    private boolean mLocationPermissionGranted = false;
 
 
     public RoutingFragment() {
@@ -112,42 +113,10 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
 
         this.savedInstanceState = savedInstanceState;
 
-        /*int MyVersion = Build.VERSION.SDK_INT;
-        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (!checkIfAlreadyhavePermission()) {
-                requestForSpecificPermission();
-            }
-        }
-
-        int permissionCheck = ContextCompat.checkSelfPermission(
-                this, Manifest.permission.READ_PHONE_STATE);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_PHONE_STATE)) {
-                showExplanation("Permission Needed", "Rationale", Manifest.permission.READ_PHONE_STATE, REQUEST_PERMISSION_PHONE_STATE);
-            } else {
-                requestPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PERMISSION_PHONE_STATE);
-            }
-        } else {
-            Toast.makeText(MainActivity.this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
-        }*/
-        startTrip();
-
+        getLocationPermission();
         return rootView;
     }
 
-    private boolean checkIfAlreadyhavePermission() {
-        int result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private void requestForSpecificPermission() {
-        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.GET_ACCOUNTS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
-    }
 
     private void startTrip() {
         Bundle bundle = this.getArguments();
@@ -250,7 +219,13 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
 
     @Override
     public void onNavigationReady(boolean isRunning) {
-        getRoute(trip.getStartPoint(), trip.getEndPoint());
+        if (mLocationPermissionGranted)
+            getRoute(trip.getStartPoint(), trip.getEndPoint());
+        else {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
     }
 
 
@@ -405,21 +380,49 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     @Override
     public void onDetach() {
         super.onDetach();
-        showGoToHomeDialog();
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fMain, new UpComingFragment());
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
+    private void getLocationPermission() {
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+        Log.e(TAG, "getLocationPermission: getting location permission");
 
-    @Override
-    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startTrip();
-            } else {
-                Toast.makeText(getContext(), "We need location permission", Toast.LENGTH_SHORT).show();
-            }
+        //now we want to check whether or not permission is granted
+
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+            startTrip();
+
+        } else {
+            requestPermissions(permissions, ACCESS_FINE_LOCATION_REQUEST_CODE);
         }
     }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.e(TAG, "onRequestPermissionsResult: Called!.");
+        mLocationPermissionGranted = false;
+        if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE) {
+            if (grantResults.length > 0) {
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        mLocationPermissionGranted = false;
+                        Toast.makeText(getContext(), "We need location permission", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                Log.e(TAG, "onRequestPermissionsResult: permission granted");
+                mLocationPermissionGranted = true;
+                //showSettingsAlert();
+                //initialize our map
+                startTrip();
+            }
+        }
+    }
 }
+
+
+

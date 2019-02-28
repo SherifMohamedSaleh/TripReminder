@@ -39,6 +39,7 @@ import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 import java.util.Calendar;
 
 import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_CARDS;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -60,7 +61,7 @@ public class TripFragment extends Fragment implements FirebaseReferences {
 //    FloatingActionButton editTrip,startTrip,saveTrip;
 //    Button notesBtn,roundedBtn , tripDate , tripTime;
     EditText tripName, tripDate, tripTime, tripSource, tripDest;
-    FloatingActionButton editTrip, startTrip, saveTrip;
+    FloatingActionButton editTrip, saveTrip;
     Button notesBtn, roundedBtn;
     TextView tripStatus;
     CheckBox doneCheckBox;
@@ -86,10 +87,9 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         tripDest = view.findViewById(R.id.tripDestVal);
         doneCheckBox = view.findViewById(R.id.doneCheckBox);
         notesBtn = view.findViewById(R.id.notesBtn);
-        roundedBtn = view.findViewById(R.id.startRoundBtn);
+        roundedBtn = view.findViewById(R.id.resumeRoundBtn);
         editTrip = view.findViewById(R.id.editTripBtn);
         saveTrip = view.findViewById(R.id.saveTripBtn);
-        startTrip = view.findViewById(R.id.startTripBtn);
         draw = tripName.getBackground();
         tripName.setText(trip.getTripName());
 
@@ -102,8 +102,12 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         } else if (trip.getStatus().equals("c")) {
             tripStatus.setText("Cancelled");
             doneCheckBox.setChecked(false);
+        } else if (trip.getStatus().equals("h")) {
+            tripStatus.setText("Half finished");
+            doneCheckBox.setChecked(false);
         }
-        if (trip.isRoundedTrip()) {
+
+        if (trip.isRoundedTrip() && trip.getStatus().equals("h")) {
             roundedBtn.setVisibility(View.VISIBLE);
         }
         tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
@@ -140,13 +144,9 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             }
         });
         if (editMode) {
-
-
-            Log.i(TAG, "onCreateView:      hhhhhhhhhhhhhheeeeeeeeeeeeelllllllllllllllllloooooooooooooooooooooo");
             tripTime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.i("123123", "onClick:  time ");
                     TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
@@ -157,7 +157,6 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                             calender1.set(Calendar.MINUTE, selectedMinute);
                             calender1.set(Calendar.SECOND, 0);
 
-                            Log.i(TAG, " calender1 hours: " + selectedHours + " minutes: " + selectedMinute);
                         }
 
                     }, hour, minute, false);
@@ -168,17 +167,14 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             tripDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.i("Date", "onClick: ");
                     DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
 
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                             trip.setDate(new TripDate(day, month, year));
-                            //   tripDate.setText(Integer.toString(trip.getDate().getDay())+"/"+Integer.toString(trip.getDate().getMonth())+"/"+Integer.toString(trip.getDate().getYear()));
                             calender.set(Calendar.YEAR, year);
                             calender.set(Calendar.MONTH, month);
                             calender.set(Calendar.DAY_OF_MONTH, day);
-                            Log.i(TAG, " calender1 month: " + month + " day: " + day);
                         }
 
                     }, year, month, day);
@@ -277,6 +273,21 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 ft.addToBackStack(null);
                 ft.replace(R.id.fMain, noteFragment, "tripFragmentTag");
                 ft.commit();
+            }
+        });
+
+        roundedBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("trip", trip);
+                RoutingFragment fragment = new RoutingFragment();
+                fragment.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.fMain, fragment);
+                ft.commit();
+
             }
         });
 
