@@ -9,14 +9,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.example.trip.R;
-import com.example.trip.activities.HomeNavigationActivity;
+import com.example.trip.activities.Dialog;
 import com.example.trip.models.Trip;
 
 import java.io.Serializable;
@@ -56,8 +55,8 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     public NotificationCompat.Builder getChannelNotification() {
-        Intent intent = new Intent(base, HomeNavigationActivity.class);
-        intent.putExtra("Trip", (Serializable) trip);
+        Intent intent = new Intent(base, Dialog.class);
+        intent.putExtra("TripID", (Serializable) trip.getId());
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, trip.getTripRequestId(), intent, 0);
 
@@ -67,10 +66,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentText("Your AlarmManager is working.")
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setAutoCancel(false)
-                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
-                .setLights(Color.RED, 3000, 3000)
                 .setSound(soundUri).setWhen(System.currentTimeMillis())
-                .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND | Notification.FLAG_SHOW_LIGHTS)
                 .setLights(0xff00ff00, 300, 100)
                 .setContentIntent(pendingIntent);

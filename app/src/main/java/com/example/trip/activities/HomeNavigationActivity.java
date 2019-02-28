@@ -1,5 +1,6 @@
 package com.example.trip.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -18,10 +19,12 @@ import com.example.trip.fragments.RoutingFragment;
 import com.example.trip.fragments.SettingsFragment;
 import com.example.trip.fragments.UpComingFragment;
 import com.example.trip.models.Trip;
+import com.example.trip.utils.FirebaseReferences;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class HomeNavigationActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FirebaseReferences {
 
     private static final String TAG = "HomeNavigationActivity";
 
@@ -49,13 +52,6 @@ public class HomeNavigationActivity extends AppCompatActivity
                 Log.i(TAG, "onCreate: trip ID" + trip.getId());
                 Log.i(TAG, "onCreate:  End Point" + trip.getEndPoint().getAddress());
                 Log.i(TAG, "onCreate: Start Point" + trip.getStartPoint().getAddress());
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("trip", trip);
-//                RoutingFragment fragment = new RoutingFragment();
-//                fragment.setArguments(bundle);
-//
-//                ft.replace(R.id.fMain, new RoutingFragment());
-
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("trip", trip);
                 RoutingFragment fragment = new RoutingFragment();
@@ -128,6 +124,14 @@ public class HomeNavigationActivity extends AppCompatActivity
             ft.replace(R.id.fMain, new SettingsFragment());
             ft.commit();
         } else if (id == R.id.nav_logout) {
+
+            FirebaseAuth.getInstance().signOut();
+            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                Intent intent = new Intent(HomeNavigationActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+            // [END auth_sign_out]
+
    /*         AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder = new AlertDialog.Builder(getApplicationContext(), android.R.style.Theme_Material_Dialog_Alert);
