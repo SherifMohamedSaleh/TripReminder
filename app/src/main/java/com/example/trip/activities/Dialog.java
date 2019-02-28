@@ -80,7 +80,7 @@ public class Dialog extends AppCompatActivity implements FirebaseReferences {
                     alert.setNeutralButton("Later", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            NotificationHelper notificationHelper = new NotificationHelper(context, trip.getTripRequestId());
+                            NotificationHelper notificationHelper = new NotificationHelper(context, trip.getTripName());
                             NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
                             notificationHelper.getManager().notify(1, nb.build());
 

@@ -23,9 +23,9 @@ public class NotificationHelper extends ContextWrapper {
 
     private NotificationManager mManager;
     Context base;
-    int id;
+    String id;
 
-    public NotificationHelper(Context base, int m) {
+    public NotificationHelper(Context base, String m) {
         super(base);
         this.base = base;
         id = m;
@@ -62,29 +62,6 @@ public class NotificationHelper extends ContextWrapper {
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND | Notification.FLAG_SHOW_LIGHTS)
                 .setLights(0xff00ff00, 300, 100);
-        // .setLatestEventInfo(context, title, message, intent);
-
-
-//
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("trip", tripData);
-//        RoutingFragment fragment = new RoutingFragment();
-//        fragment.setArguments(bundle);
-//        FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-//        ft.addToBackStack(null);
-//        ft.replace(R.id.fMain, fragment);
-//        ft.commit();
-//        Intent notificationIntent = new Intent(base, MainActivity.class);
-//
-//    notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-//            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//
-//    PendingIntent intent = PendingIntent.getActivity(base, 0,
-//            notificationIntent, 0);
-//
-//    notification.setLatestEventInfo(context, title, message, intent);
-//    notification.flags |= Notification.FLAG_AUTO_CANCEL;
-//    notificationManager.notify(0, notification);
 
 
     }
