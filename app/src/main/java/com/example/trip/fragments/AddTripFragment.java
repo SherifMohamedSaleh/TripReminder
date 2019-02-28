@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,10 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.trip.R;
 import com.example.trip.adapters.AddNotesAdapter;
@@ -36,6 +39,8 @@ import com.example.trip.models.TripLocation;
 import com.example.trip.models.TripTime;
 import com.example.trip.utils.AlertReceiver;
 import com.example.trip.utils.FirebaseReferences;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
@@ -180,21 +185,59 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (addNotesAdapter.getNotesArrayList() != null)
-                    trip.setNotes(addNotesAdapter.getNotesArrayList());
+                if (!isEmpty(tripNameEditText)) {
+                    if (trip.getDate() != null) {
+                        if (trip.getTime() != null) {
+                            if (trip.getStartPoint() != null) {
+                                if (trip.getEndPoint() != null) {
+                                    if (addNotesAdapter.getNotesArrayList() != null)
+                                        trip.setNotes(addNotesAdapter.getNotesArrayList());
 
-                trip.setTripName(tripNameEditText.getText().toString());
+                                    trip.setTripName(tripNameEditText.getText().toString());
 
-                trip.setRoundedTrip(isRoundedSwitch.isChecked());
+                                    trip.setRoundedTrip(isRoundedSwitch.isChecked());
 
-                String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
-                trip.setId(key);
-                int id = (int) System.currentTimeMillis();
-                trip.setTripRequestId(id);
-                startAlarm(calender, id);
+                                    String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
+                                    trip.setId(key);
+                                    int id = (int) System.currentTimeMillis();
+                                    trip.setTripRequestId(id);
+                                    startAlarm(calender, id);
 
-                tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip);
-
+                                    tripsRef.child(firebaseUser.getUid()).child(key).setValue(trip).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(getActivity(), "Trip added", Toast.LENGTH_SHORT).show();
+                                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                            ft.replace(R.id.fMain, new UpComingFragment());
+                                            ft.addToBackStack(null);
+                                            ft.commit();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getActivity(), "Failed to add trip", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
+                                    //if end point is not set
+                                    Toast.makeText(getActivity(), "End point cannot be empty", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                //if start point is not set
+                                Toast.makeText(getActivity(), "Start point cannot be empty", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            //if time is not set
+                            Toast.makeText(getActivity(), "Time cannot be empty", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        //if date is not set
+                        Toast.makeText(getActivity(), "Date cannot be empty", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // if name is empty
+                    Toast.makeText(getActivity(), "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -236,13 +279,8 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
         }
     }
 
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        FragmentManager fm = getFragmentManager();
-//        FragmentTransaction ft = fm.beginTransaction();
-//       // ((NavigationView) getActivity().findViewById(R.id.nav_view)).setCheckedItem(R.id.nav_home);
-//        ft.replace(R.id.fMain, new UpComingFragment());
-//        ft.commit();
-//    }
+
+    private boolean isEmpty(EditText editText) {
+        return editText.getText().toString().length() <= 0 || editText.getText() == null;
+    }
 }

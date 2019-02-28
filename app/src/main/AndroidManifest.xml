@@ -21,6 +21,7 @@
             android:taskAffinity=""
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"></activity>
         <activity
+            android:configChanges="orientation|screenSize"
             android:name=".activities.HomeNavigationActivity"
             android:label="@string/title_activity_home_navigation"
             android:theme="@style/AppTheme.NoActionBar"></activity>

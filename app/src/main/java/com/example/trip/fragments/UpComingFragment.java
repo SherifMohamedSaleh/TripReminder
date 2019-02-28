@@ -1,11 +1,11 @@
 package com.example.trip.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.trip.R;
-import com.example.trip.activities.TempAddTripActivity;
 import com.example.trip.adapters.RecyclerAdapter;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
@@ -104,8 +103,10 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
         addNewTripButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                startActivity(new Intent(getContext(), TempAddTripActivity.class));
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fMain, new AddTripFragment());
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
         return rootView;
