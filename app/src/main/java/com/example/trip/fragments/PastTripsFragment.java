@@ -3,6 +3,7 @@ package com.example.trip.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.trip.R;
 import com.example.trip.adapters.RecyclerAdapter;
@@ -33,6 +35,8 @@ public class PastTripsFragment extends Fragment {
     FloatingActionButton viewOnMapButton;
     NavigationView navigationView;
     List<Trip> tripDataList = new ArrayList<>();
+    ProgressBar progressBar;
+    ConstraintLayout noTripsLayout;
 
     public PastTripsFragment() {
         // Required empty public constructor
@@ -47,6 +51,12 @@ public class PastTripsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_past_trips, container, false);
         viewOnMapButton = rootView.findViewById(R.id.fab_view_on_map);
         rv = rootView.findViewById(R.id.rv);
+        progressBar = rootView.findViewById(R.id.progress_bar);
+        noTripsLayout = rootView.findViewById(R.id.layout_no_trips_history);
+
+        progressBar.setVisibility(View.VISIBLE);
+        noTripsLayout.setVisibility(View.INVISIBLE);
+
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         final RecyclerAdapter adapter = new RecyclerAdapter(getContext(), tripDataList);
         rv.setAdapter(adapter);
@@ -58,7 +68,7 @@ public class PastTripsFragment extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     tripDataList.clear();
-
+                    progressBar.setVisibility(View.INVISIBLE);
                     for (DataSnapshot tripSnapShot : dataSnapshot.getChildren()) {
                         Trip trip = tripSnapShot.getValue(Trip.class);
                         if (trip != null) {
@@ -75,21 +85,28 @@ public class PastTripsFragment extends Fragment {
                         }
 
                     }
-                    adapter.notifyDataSetChanged();
-                    viewOnMapButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Log.i("Past trips", "map button clicked");
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("trips", (Serializable) tripDataList);
-                            StaticMapFragment fragment = new StaticMapFragment();
-                            fragment.setArguments(bundle);
-                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.addToBackStack(null);
-                            ft.replace(R.id.fMain, fragment);
-                            ft.commit();
-                        }
-                    });
+                    if (tripDataList.size() <= 0) {
+                        noTripsLayout.setVisibility(View.VISIBLE);
+                        viewOnMapButton.hide();
+                    } else {
+                        noTripsLayout.setVisibility(View.INVISIBLE);
+                        viewOnMapButton.show();
+
+                        viewOnMapButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Log.i("Past trips", "map button clicked");
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("trips", (Serializable) tripDataList);
+                                StaticMapFragment fragment = new StaticMapFragment();
+                                fragment.setArguments(bundle);
+                                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                ft.addToBackStack(null);
+                                ft.replace(R.id.fMain, fragment);
+                                ft.commit();
+                            }
+                        });
+                    }
                 }
 
                 @Override

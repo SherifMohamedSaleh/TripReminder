@@ -47,6 +47,7 @@
     <string name="when_do_you_want_to_return">When do you want to return?</string>
     <string name="go_to_home_screen">Go to home screen</string>
     <string name="no_notes_were_added">No Notes were added</string>
+    <string name="no_trips_yet">No trips yet</string>
 </resources>
 
 
