@@ -40,9 +40,6 @@ import java.util.Calendar;
 
 import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_CARDS;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class TripFragment extends Fragment implements FirebaseReferences {
 
     private static final String TAG = "TripFragment";
@@ -53,13 +50,12 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     int year = calender.get(Calendar.YEAR);
     int month = calender.get(Calendar.MONTH);
     int day = calender.get(Calendar.DAY_OF_MONTH);
+    Boolean changeAlarm = false;
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
     private static final int REQUEST_CODE_END_AUTOCOMPLETE = 2;
 
-    //    EditText tripName,tripSource,tripDest;
-//    FloatingActionButton editTrip,startTrip,saveTrip;
-//    Button notesBtn,roundedBtn , tripDate , tripTime;
+
     EditText tripName, tripDate, tripTime, tripSource, tripDest;
     FloatingActionButton editTrip, saveTrip;
     Button notesBtn, roundedBtn;
@@ -119,8 +115,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             @Override
             public void onClick(View v) {
                 editMode = true;
-                saveTrip.setVisibility(View.VISIBLE);
-                editTrip.setVisibility(View.INVISIBLE);
+                saveTrip.show();
+                editTrip.hide();
                 tripName.setFocusable(true);
                 tripName.setClickable(true);
                 tripName.setFocusableInTouchMode(true);
@@ -156,6 +152,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                             calender1.set(Calendar.HOUR_OF_DAY, selectedHours);
                             calender1.set(Calendar.MINUTE, selectedMinute);
                             calender1.set(Calendar.SECOND, 0);
+                            changeAlarm = true;
+
 
                         }
 
@@ -231,8 +229,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             public void onClick(View v) {
                 editMode = false;
 
-                saveTrip.setVisibility(View.INVISIBLE);
-                editTrip.setVisibility(View.VISIBLE);
+                saveTrip.hide();
+                editTrip.show();
                 tripName.setFocusable(false);
                 tripName.setClickable(false);
                 tripName.setFocusableInTouchMode(false);
@@ -256,8 +254,9 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                 doneCheckBox.setFocusable(false);
                 doneCheckBox.setClickable(false);
                 //   cancelAlarm();
-                startAlarm(calender1);
-                //   trip.setTripRequestId(id);
+                if(changeAlarm == true) {
+                    startAlarm(calender1);
+                }//   trip.setTripRequestId(id);
                 trip.setTripName(tripName.getText().toString());
 
                 tripsRef.child(firebaseUser.getUid()).child(trip.getId()).setValue(trip);
