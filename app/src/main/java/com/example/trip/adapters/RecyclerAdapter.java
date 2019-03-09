@@ -57,6 +57,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
         holder.textOne.setText(tripData.getTripName());
         holder.textTwo.setText(tripData.getDate().getDay() + "/" + (tripData.getDate().getMonth() + 1) + "/" + tripData.getDate().getYear() + " at " + tripData.getTime().getHour() + " : " + tripData.getTime().getMinute());
 
+
         //   holder.textFive.setText(tripData.getTripType()+"");
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,10 +97,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int whichButton) {
+                                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                                Intent intent = new Intent(context, AlertReceiver.class);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, tripData.getTripRequestId(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                pendingIntent.getCreatorUid();
+                                alarmManager.cancel(pendingIntent);
                                 tripDataList.remove(position);
                                 tripsRef.child(firebaseUser.getUid()).child(tripData.getId()).removeValue();
                                 notifyItemRemoved(position);
-                                cancelAlarm();
+
                             }
                         })
                         .setNegativeButton(android.R.string.no, null).show();
@@ -108,11 +114,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
         });
 
     }
+
     private void cancelAlarm() {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlertReceiver.class);
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, tripData.getTripRequestId(), intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, tripData.getTripRequestId(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         pendingIntent.getCreatorUid();
         alarmManager.cancel(pendingIntent);
