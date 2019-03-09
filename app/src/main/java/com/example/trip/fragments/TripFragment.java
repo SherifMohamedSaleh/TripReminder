@@ -32,6 +32,8 @@ import com.example.trip.models.TripLocation;
 import com.example.trip.models.TripTime;
 import com.example.trip.utils.AlertReceiver;
 import com.example.trip.utils.FirebaseReferences;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
@@ -57,6 +59,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
     private static final int REQUEST_CODE_END_AUTOCOMPLETE = 2;
 
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     //    EditText tripName,tripSource,tripDest;
 //    FloatingActionButton editTrip,startTrip,saveTrip;
 //    Button notesBtn,roundedBtn , tripDate , tripTime;
@@ -119,8 +123,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             @Override
             public void onClick(View v) {
                 editMode = true;
-                saveTrip.setVisibility(View.VISIBLE);
-                editTrip.setVisibility(View.INVISIBLE);
+          //      saveTrip.setVisibility(View.VISIBLE);
+            //    editTrip.setVisibility(View.INVISIBLE);
                 tripName.setFocusable(true);
                 tripName.setClickable(true);
                 tripName.setFocusableInTouchMode(true);
@@ -231,8 +235,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             public void onClick(View v) {
                 editMode = false;
 
-                saveTrip.setVisibility(View.INVISIBLE);
-                editTrip.setVisibility(View.VISIBLE);
+//                saveTrip.setVisibility(View.INVISIBLE);
+  //              editTrip.setVisibility(View.VISIBLE);
                 tripName.setFocusable(false);
                 tripName.setClickable(false);
                 tripName.setFocusableInTouchMode(false);

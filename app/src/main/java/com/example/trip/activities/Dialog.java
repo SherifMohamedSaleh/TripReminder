@@ -19,6 +19,8 @@ import android.view.Window;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
 import com.example.trip.utils.NotificationHelper;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -31,7 +33,8 @@ public class Dialog extends AppCompatActivity implements FirebaseReferences {
     Context context;
     Trip trip;
     String id;
-
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

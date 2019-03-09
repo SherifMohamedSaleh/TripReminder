@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import com.example.trip.R;
 import com.example.trip.adapters.RecyclerAdapter;
 import com.example.trip.models.Trip;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -27,7 +29,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.trip.utils.FirebaseReferences.firebaseUser;
 import static com.example.trip.utils.FirebaseReferences.tripsRef;
 
 public class PastTripsFragment extends Fragment {
@@ -37,7 +38,8 @@ public class PastTripsFragment extends Fragment {
     List<Trip> tripDataList = new ArrayList<>();
     ProgressBar progressBar;
     ConstraintLayout noTripsLayout;
-
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     public PastTripsFragment() {
         // Required empty public constructor
     }

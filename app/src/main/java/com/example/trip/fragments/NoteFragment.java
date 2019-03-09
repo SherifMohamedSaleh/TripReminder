@@ -18,6 +18,8 @@ import com.example.trip.adapters.AddNotesAdapter;
 import com.example.trip.models.Note;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -33,7 +35,8 @@ public class NoteFragment extends Fragment implements FirebaseReferences {
     AddNotesAdapter addNotesAdapter;
     RecyclerView notesRecyclerView;
     LinearLayoutManager linearLayoutManager;
-
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     public NoteFragment() {
         // Required empty public constructor
     }

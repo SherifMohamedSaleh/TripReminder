@@ -14,6 +14,7 @@ public class Trip implements Serializable {
     private int tripRequestId;
     private String status; //u for upcoming, h for halfway only "for rounded trips", d for done , c for cancelled
     private String id;
+    private String userId;
     private float speedSum;
     private int speedsCount;
 
@@ -107,6 +108,14 @@ public class Trip implements Serializable {
 
     public void setNotes(ArrayList<Note> notes) {
         this.notes = notes;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public float getSpeedSum() {

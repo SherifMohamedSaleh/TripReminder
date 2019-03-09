@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 
 import com.example.trip.R;
 import com.example.trip.models.Trip;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -37,7 +39,8 @@ public class StaticMapFragment extends Fragment implements OnMapReadyCallback {
     private FloatingActionButton button;
     private List<Trip> trips;
 
-
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     public StaticMapFragment() {
         // Required empty public constructor
     }

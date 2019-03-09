@@ -18,6 +18,8 @@ import com.example.trip.R;
 import com.example.trip.adapters.RecyclerAdapter;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -32,7 +34,8 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
     FloatingActionButton addNewTripButton;
     ProgressBar progressBar;
     ConstraintLayout noTripsLayout;
-
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
     List<Trip> tripDataList = new ArrayList<>();
 
@@ -65,14 +68,15 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
         if (firebaseUser != null) {
             tripsRef.keepSynced(true);
             Log.e("AllTripsActivity", "onCreate: " + firebaseUser.getUid());
-
             tripsRef.child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     progressBar.setVisibility(View.INVISIBLE);
                     for (DataSnapshot tripSnapShot : dataSnapshot.getChildren()) {
                         Trip trip = tripSnapShot.getValue(Trip.class);
-                        if (trip != null) {
+                        Log.i("firebase id", firebaseUser.getUid());
+                        Log.i("trip firebase id", trip.getUserId());
+                        if (trip != null && trip.getUserId().equals(firebaseUser.getUid())) {
                             tripDataList.add(trip);
                             adapter.notifyDataSetChanged();
                         }

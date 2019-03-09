@@ -41,6 +41,8 @@ import com.example.trip.utils.AlertReceiver;
 import com.example.trip.utils.FirebaseReferences;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
@@ -61,7 +63,8 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
     RecyclerView notesRecyclerView;
     TextView startPointTextView, endPointTextView;
     Switch isRoundedSwitch;
-
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     Button doneButton;
 
     ArrayList<Note> notesArrayList;
@@ -196,7 +199,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
                                     trip.setTripName(tripNameEditText.getText().toString());
 
                                     trip.setRoundedTrip(isRoundedSwitch.isChecked());
-
+                                    trip.setUserId(firebaseUser.getUid());
                                     String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
                                     trip.setId(key);
                                     int id = (int) System.currentTimeMillis();

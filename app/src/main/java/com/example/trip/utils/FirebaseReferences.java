@@ -12,7 +12,6 @@ public interface FirebaseReferences {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference tripsRef = database.getReference("trips");
 
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
 
 }

@@ -24,12 +24,16 @@ import com.example.trip.fragments.TripFragment;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.AlertReceiver;
 import com.example.trip.utils.FirebaseReferences;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ProductViewHolder> implements FirebaseReferences {
     private List<Trip> tripDataList;
     private Context context;
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     Trip tripData;
 
     public RecyclerAdapter(Context context, List<Trip> tripDataList) {

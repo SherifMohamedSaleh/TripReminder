@@ -29,6 +29,8 @@ import com.example.trip.adapters.NotesAdapter;
 import com.example.trip.models.Trip;
 import com.example.trip.models.TripLocation;
 import com.example.trip.utils.FirebaseReferences;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
@@ -75,7 +77,8 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     private TextView noNotesTextView;
     Trip trip;
     private NavigationView navigationView;
-
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
     private boolean arrived;
     private boolean roundFinished;
     private boolean isHeadingBack;
