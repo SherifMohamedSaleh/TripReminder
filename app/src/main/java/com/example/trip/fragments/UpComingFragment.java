@@ -74,11 +74,13 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
                     progressBar.setVisibility(View.INVISIBLE);
                     for (DataSnapshot tripSnapShot : dataSnapshot.getChildren()) {
                         Trip trip = tripSnapShot.getValue(Trip.class);
-                        Log.i("firebase id", firebaseUser.getUid());
-                        Log.i("trip firebase id", trip.getUserId());
+  //                      Log.i("firebase id", firebaseUser.getUid());
+//                        Log.i("trip firebase id", trip.getUserId());
                         if (trip != null && trip.getUserId().equals(firebaseUser.getUid())) {
-                            tripDataList.add(trip);
-                            adapter.notifyDataSetChanged();
+                            if (trip.getStatus().equals("u")) {
+                                tripDataList.add(trip);
+                                adapter.notifyDataSetChanged();
+                            }
                         }
                     }
 

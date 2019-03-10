@@ -5,8 +5,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.trip.R;
@@ -42,6 +46,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -54,10 +59,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
     public void onBindViewHolder(@NonNull ProductViewHolder holder, final int position) {
 
         final Trip tripData = tripDataList.get(position);
-        holder.textOne.setText(tripData.getTripName());
-        holder.textTwo.setText(tripData.getDate().getDay() + "/" + (tripData.getDate().getMonth() + 1) + "/" + tripData.getDate().getYear() + " at " + tripData.getTime().getHour() + " : " + tripData.getTime().getMinute());
-
-
+        String str = tripData.getTripName();
+        String cap = str.substring(0, 1).toUpperCase() + str.substring(1);
+        holder.textOne.setText(cap);
+        holder.textTwo.setText(tripData.getDate().getDay() + "/" + (tripData.getDate().getMonth() + 1) + "/" + tripData.getDate().getYear() + ", " + tripData.getTime().getHour() + ":" + tripData.getTime().getMinute());
+        if(tripData.getStatus().equals("d"))
+        {
+            holder.pastImageView.setVisibility(View.VISIBLE);
+            holder.upcomingImageView.setVisibility(View.INVISIBLE);
+            holder.startTripButton.setVisibility(View.INVISIBLE);
+          //  LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+         //   lp.setMargins(200, 0, 0, 0);
+           // holder.speedImage.setLayoutParams(lp);
+            //lp.setMargins(0, 0, 0, 0);
+            //holder.startTripButton.setLayoutParams(lp);
+            holder.speedText.setVisibility(View.VISIBLE);
+            holder.speedImage.setVisibility(View.VISIBLE);
+            holder.speedText.setText(" "+Float.toString(tripData.getSpeedSum())+" km/h");
+        }
         //   holder.textFive.setText(tripData.getTripType()+"");
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +88,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
                 ft.addToBackStack(null);
                 ft.replace(R.id.fMain, tripFragment);
                 ft.commit();
-                //Toast.makeText(context, " hello to another screen  : item  " + position + "  selected", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -138,24 +156,30 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
 
     class ProductViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textOne, textTwo, textFour, textFive;
+        TextView textOne, textTwo,speedText;
         CardView cardView;
         ImageButton startTripButton;
         ImageButton deleteTrip;
+        ImageView speedImage;
+        ImageView upcomingImageView,pastImageView;
 
-
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public ProductViewHolder(View itemView) {
             super(itemView);
 
             textOne = itemView.findViewById(R.id.textOne);
             textTwo = itemView.findViewById(R.id.textTwo);
-            //     textFour = itemView.findViewById(R.id.textFour);
-            //   textFive = itemView.findViewById(R.id.textFive);
+            speedImage=itemView.findViewById(R.id.speedImageView);
+            speedText = itemView.findViewById(R.id.speedView);
             cardView = (CardView) itemView.findViewById(R.id.cardview_id);
-
+            upcomingImageView=itemView.findViewById(R.id.upcomingImageView);
             startTripButton = itemView.findViewById(R.id.btn_start_trip);
-
             deleteTrip = itemView.findViewById(R.id.deleteTripBtn);
+            pastImageView=itemView.findViewById(R.id.pastImageView);
+            upcomingImageView.setElevation(10);
+            pastImageView.setElevation(10);
+            cardView.setElevation(5);
+            deleteTrip.setElevation(10);
         }
     }
 }

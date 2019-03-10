@@ -13,13 +13,6 @@
         android:orientation="vertical"
         android:weightSum="6">
 
-        <ImageView
-            android:id="@+id/imageMap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:src="@drawable/ic_launcher_background" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"

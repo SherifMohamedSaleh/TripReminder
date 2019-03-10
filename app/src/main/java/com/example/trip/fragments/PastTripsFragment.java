@@ -73,14 +73,13 @@ public class PastTripsFragment extends Fragment {
                     progressBar.setVisibility(View.INVISIBLE);
                     for (DataSnapshot tripSnapShot : dataSnapshot.getChildren()) {
                         Trip trip = tripSnapShot.getValue(Trip.class);
-                        if (trip != null) {
+                        if (trip != null && trip.getUserId().equals(firebaseUser.getUid())) {
                             Log.e("AllTripsActivity", "onCreate: " + "add to list");
                             if (trip.getStatus().equals("d")) {
                                 tripDataList.add(trip);
                                 adapter.notifyDataSetChanged();
                                 Log.e("AllTripsActivity", "onCreate: " + tripDataList.size());
                             }
-
                         } else {
                             Log.e("AllTripsActivity", "onCreate: " + "no current user");
 
