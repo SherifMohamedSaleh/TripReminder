@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity"
-    android:background="#111111">
+    android:background="@color/fui_transparent"
+    >
 
     <ImageView
         android:layout_width="98dp"
