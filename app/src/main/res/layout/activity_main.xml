@@ -1,97 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity"
+    android:background="#111111">
 
-    <TextView
-        android:id="@+id/email_txt"
-        android:layout_width="53dp"
-        android:layout_height="42dp"
-
-
+    <ImageView
+        android:layout_width="98dp"
+        android:layout_height="88dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="21dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="27dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="Email" />
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="74dp"
+        android:src="@drawable/asset" />
 
     <EditText
 
         android:id="@+id/email_edit"
-        android:layout_width="317dp"
+        android:layout_width="235dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginStart="74dp"
+        android:layout_marginTop="182dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp" />
-
-    <TextView
-        android:id="@+id/pass_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="43dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="87dp"
-        android:text="Password" />
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/edittext"
+        android:hint="Email"
+        android:padding="5dp" />
 
     <EditText
         android:id="@+id/pass_edit"
-        android:layout_width="305dp"
+        android:layout_width="236dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-
         android:layout_alignParentTop="true"
-        android:layout_marginStart="89dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="257dp"
+        android:background="@drawable/edittext"
+        android:hint="password"
+        android:padding="5dp"
         android:password="true" />
+
 
     <Button
         android:id="@+id/btn_sign_in"
-        android:layout_width="140dp"
+        android:layout_width="134dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="226dp"
-        android:layout_marginTop="170dp"
+        android:layout_marginStart="190dp"
+        android:layout_marginTop="342dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/fui_transparent"
+        android:background="@drawable/button"
         android:text="SignIn"
         android:textSize="20dp" />
 
     <Button
         android:id="@+id/btn_sign_up"
-        android:layout_width="140dp"
+        android:layout_width="134dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="34dp"
-        android:layout_marginTop="166dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="343dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/fui_transparent"
+        android:background="@drawable/button"
         android:text="SignUp"
         android:textSize="20dp" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
-        android:layout_width="183dp"
+        android:layout_width="160dp"
         android:layout_height="45dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="113dp"
-        android:layout_marginTop="249dp"
+        android:layout_marginStart="116dp"
+        android:layout_marginTop="422dp"
+        android:background="@color/fui_transparent"
         android:textSize="20dp" />
 
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

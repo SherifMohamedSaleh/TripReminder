@@ -120,22 +120,7 @@ public class HomeNavigationActivity extends AppCompatActivity
                 Intent intent = new Intent(HomeNavigationActivity.this, MainActivity.class);
                 startActivity(intent);
             }
-            // [END auth_sign_out]
 
-   /*         AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(getApplicationContext(), android.R.style.Theme_Material_Dialog_Alert);
-            } else {
-                builder = new AlertDialog.Builder(getApplicationContext());
-            }
-            builder.setTitle("Logout").setMessage("Are you sure you want to logout?").setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    //logout code
-                }
-            });
-            AlertDialog alert=builder.create();
-            alert.show();
-            */
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

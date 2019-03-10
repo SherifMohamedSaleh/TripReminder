@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.makeText(MainActivity.this, "this account is exist.",
                                             Toast.LENGTH_SHORT).show();
                                 }
 
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.makeText(MainActivity.this, "wrong email or password .",
                                             Toast.LENGTH_SHORT).show();
                                 }
 
@@ -173,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
@@ -181,9 +178,8 @@ public class MainActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
-                // ...
+
             }
         }
     }
@@ -216,63 +212,5 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         hideProgressDialog();
     }
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        FacebookSdk.sdkInitialize(getApplicationContext());
-//        AppEventsLogger.activateApp(this);
-//        setContentView(R.layout.activity_main);
-//
-//        List<AuthUI.IdpConfig> providers = Arrays.asList(
-//                new AuthUI.IdpConfig.EmailBuilder().build(),
-//                new AuthUI.IdpConfig.PhoneBuilder().build(),
-//                new AuthUI.IdpConfig.GoogleBuilder().build());
-//
-//// Create and launch sign-in intent
-//        startActivityForResult(
-//                AuthUI.getInstance()
-//                        .createSignInIntentBuilder()
-//                        .setAvailableProviders(providers)
-//                        .setIsSmartLockEnabled(true)
-//                        .build(),
-//                RC_SIGN_IN);
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == RC_SIGN_IN) {
-//            IdpResponse response = IdpResponse.fromResultIntent(data);
-//
-//            if (resultCode == RESULT_OK) {
-//                // Successfully signed in
-//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//
-//                Intent intent = new Intent(this, AllTripsActivity.class);
-//                startActivity(intent);
-//                // ...
-//            } else {
-//                // Sign in failed. If response is null the user canceled the
-//                // sign-in flow using the back button. Otherwise check
-//                // response.getError().getErrorCode() and handle the error.
-//                // ...
-//            }
-//        }
-//    }
-//    // [END auth_fui_result]
-//
-//    public void signOut() {
-//        // [START auth_fui_signout]
-//        AuthUI.getInstance()
-//                .signOut(this)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        // ...
-//                    }
-//                });
-//        // [END auth_fui_signout]
-//    }
 
 }
