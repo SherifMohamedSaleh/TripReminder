@@ -137,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "Login Successful.",
                                                 Toast.LENGTH_SHORT).show();
                                         Intent i = new Intent(MainActivity.this, HomeNavigationActivity.class);
+                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        (MainActivity.this).finish();
                                         startActivity(i);
 
                                     } else {
@@ -182,6 +184,8 @@ public class MainActivity extends AppCompatActivity {
 
                             FirebaseUser user = mAuth.getCurrentUser();
                             Intent i = new Intent(MainActivity.this, HomeNavigationActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            (MainActivity.this).finish();
                             startActivity(i);
 
                         } else {

@@ -1,9 +1,15 @@
 package com.example.trip.fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.opengl.EGLExt;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,9 +18,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.trip.R;
+import com.example.trip.activities.MainActivity;
 import com.example.trip.adapters.RecyclerAdapter;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
@@ -27,6 +37,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.v4.content.ContextCompat.getSystemService;
+
 public class UpComingFragment extends Fragment implements FirebaseReferences {
 
 
@@ -38,6 +50,7 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
     List<Trip> tripDataList = new ArrayList<>();
+    CoordinatorLayout coordinatorLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +71,8 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
 
         progressBar.setVisibility(View.VISIBLE);
         noTripsLayout.setVisibility(View.INVISIBLE);
+        Animation shake = (Animation) AnimationUtils.loadAnimation(getContext(), R.anim.shake);
+
 
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -100,13 +115,36 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
         addNewTripButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fMain, new AddTripFragment());
-                ft.addToBackStack(null);
-                ft.commit();
+                boolean isConected = isNetworkAvailable();
+                if(isConected == true) {
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.fMain, new AddTripFragment());
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+                else{
+                    addNewTripButton.startAnimation(shake);
+                    addNewTripButton.requestFocus();
+                    View v = getActivity().findViewById(android.R.id.content);
+                    Snackbar.make(v, "you can't add trip when you are offline", Snackbar.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity(), "you can't add trip when you are offline",
+//                            Toast.LENGTH_LONG).show();
+
+                }
             }
         });
         return rootView;
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager manager =
+                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            // Network is present and connected
+            isAvailable = true;
+        }
+        return isAvailable;
     }
 
 

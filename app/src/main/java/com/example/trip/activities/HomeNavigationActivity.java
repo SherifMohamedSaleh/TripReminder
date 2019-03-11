@@ -99,6 +99,8 @@ public class HomeNavigationActivity extends AppCompatActivity
             FirebaseAuth.getInstance().signOut();
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                 Intent intent = new Intent(HomeNavigationActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                (HomeNavigationActivity.this).finish();
                 startActivity(intent);
             }
 
