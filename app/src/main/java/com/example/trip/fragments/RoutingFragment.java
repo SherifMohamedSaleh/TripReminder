@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -21,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.trip.R;
@@ -74,7 +74,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
     private NavigationMapRoute navigationMapRoute;
     // variables needed to initialize navigation
     private FloatingActionButton button;
-    private TextView noNotesTextView;
+    private ConstraintLayout noNotesLayout;
     Trip trip;
     private NavigationView navigationView;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -110,7 +110,7 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         rootView = inflater.inflate(R.layout.fragment_routing, container, false);
         navigationView = rootView.findViewById(R.id.navigation_view);
         notesRecyclerView = rootView.findViewById(R.id.rv_routing_notes);
-        noNotesTextView = rootView.findViewById(R.id.tv_not_notes);
+        noNotesLayout = rootView.findViewById(R.id.layout_no_notes);
 
         arrived = false;
         roundFinished = false;
@@ -129,14 +129,17 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
         if (bundle != null) {
             trip = (Trip) bundle.getSerializable("trip");
             if (trip != null) {
-                if (trip.getNotes() != null || trip.getNotes().size() <= 0) {
-                    noNotesTextView.setVisibility(View.INVISIBLE);
+                if (trip.getNotes().size() > 0) {
+                    Log.e(TAG, "notes exists");
+                    noNotesLayout.setVisibility(View.INVISIBLE);
                     NotesAdapter notesAdapter = new NotesAdapter(trip.getNotes(), getContext());
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                     notesRecyclerView.setAdapter(notesAdapter);
                     notesRecyclerView.setLayoutManager(linearLayoutManager);
                 } else {
-                    noNotesTextView.setVisibility(View.VISIBLE);
+                    noNotesLayout.setVisibility(View.VISIBLE);
+                    Log.e(TAG, "notes doesn't exist");
+
                 }
                 navigationView.onCreate(savedInstanceState);
                 navigationView.initialize(this);

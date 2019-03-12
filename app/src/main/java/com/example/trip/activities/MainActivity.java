@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +29,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         usernameView = findViewById(R.id.email_edit);
         passwordView = findViewById(R.id.pass_edit);
         SignInButton signInButton = findViewById(R.id.sign_in_button);
+        Animation shake = (Animation) AnimationUtils.loadAnimation(this, R.anim.shake);
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,14 +63,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         signup.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+
+                if(usernameView.getText().toString().trim().isEmpty() || passwordView.getText().toString().trim().isEmpty()){
+                    usernameView.setError("Required field");
+                    usernameView.startAnimation(shake);
+                    usernameView.requestFocus();
+                    passwordView.setError("Required field");
+                    passwordView.startAnimation(shake);
+                    passwordView.requestFocus();
+
+                }else{
                 mAuth.createUserWithEmailAndPassword(usernameView.getText().toString().trim(), passwordView.getText().toString().trim())
                         .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
@@ -79,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(MainActivity.this, "Authentication Successful.",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
+                                    usernameView.setError("account already exist");
+                                    usernameView.startAnimation(shake);
+                                    usernameView.requestFocus();
+//                                    passwordView.setError("Required field");
+//                                    passwordView.startAnimation(shake);
+//                                    passwordView.requestFocus();
                                     // If sign in fails, display a message to the user.
                                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
                                     Toast.makeText(MainActivity.this, "this account is exist.",
@@ -88,32 +111,52 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
             }
+            }
         });
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth.signInWithEmailAndPassword(usernameView.getText().toString().trim(), passwordView.getText().toString().trim())
-                        .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "signInWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    Toast.makeText(MainActivity.this, "Login Successful.",
-                                            Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(MainActivity.this, HomeNavigationActivity.class);
-                                    startActivity(i);
 
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(MainActivity.this, "wrong email or password .",
-                                            Toast.LENGTH_SHORT).show();
+                if (usernameView.getText().toString().trim().isEmpty() || passwordView.getText().toString().trim().isEmpty()) {
+                    usernameView.setError("Required field");
+                    usernameView.startAnimation(shake);
+                    usernameView.requestFocus();
+                    passwordView.setError("Required field");
+                    passwordView.startAnimation(shake);
+                    passwordView.requestFocus();
+
+                } else {
+                    mAuth.signInWithEmailAndPassword(usernameView.getText().toString().trim(), passwordView.getText().toString().trim())
+                            .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d(TAG, "signInWithEmail:success");
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        Toast.makeText(MainActivity.this, "Login Successful.",
+                                                Toast.LENGTH_SHORT).show();
+                                        Intent i = new Intent(MainActivity.this, HomeNavigationActivity.class);
+                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        (MainActivity.this).finish();
+                                        startActivity(i);
+
+                                    } else {
+                                        usernameView.setError("Wrong Email");
+                                        usernameView.startAnimation(shake);
+                                        usernameView.requestFocus();
+                                        passwordView.setError("Wrong password");
+                                        passwordView.startAnimation(shake);
+                                        passwordView.requestFocus();
+                                        // If sign in fails, display a message to the user.
+                                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                        Toast.makeText(MainActivity.this, "wrong email or password .",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+
                                 }
-
-                            }
-                        });
+                            });
+                }
             }
         });
 
@@ -141,8 +184,9 @@ public class MainActivity extends AppCompatActivity {
 
                             FirebaseUser user = mAuth.getCurrentUser();
                             Intent i = new Intent(MainActivity.this, HomeNavigationActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            (MainActivity.this).finish();
                             startActivity(i);
-
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -157,15 +201,15 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            Intent i = new Intent(MainActivity.this, HomeNavigationActivity.class);
-            startActivity(i);
-        }
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if (currentUser != null) {
+//            Intent i = new Intent(MainActivity.this, HomeNavigationActivity.class);
+//            startActivity(i);
+//        }
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

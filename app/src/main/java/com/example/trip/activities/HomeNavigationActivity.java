@@ -10,8 +10,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.trip.R;
 import com.example.trip.fragments.PastTripsFragment;
@@ -20,6 +21,7 @@ import com.example.trip.fragments.UpComingFragment;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class HomeNavigationActivity extends AppCompatActivity
@@ -64,6 +66,13 @@ public class HomeNavigationActivity extends AppCompatActivity
             ft.commit();
         }
 
+        View headerView = navigationView.getHeaderView(0);
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            TextView emailTextView = headerView.findViewById(R.id.tv_email);
+            emailTextView.setText(currentUser.getEmail());
+        }
+
         navigationView.setCheckedItem(R.id.nav_home);
 
     }
@@ -76,25 +85,6 @@ public class HomeNavigationActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home_navigation, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -118,6 +108,8 @@ public class HomeNavigationActivity extends AppCompatActivity
             FirebaseAuth.getInstance().signOut();
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                 Intent intent = new Intent(HomeNavigationActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                (HomeNavigationActivity.this).finish();
                 startActivity(intent);
             }
 

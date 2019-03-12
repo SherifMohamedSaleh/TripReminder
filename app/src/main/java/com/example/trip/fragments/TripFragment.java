@@ -134,23 +134,8 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             tripTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
-                            trip.setTime(new TripTime(selectedHours, selectedMinute));
-                            tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
-                            calender1.set(Calendar.HOUR_OF_DAY, selectedHours);
-                            calender1.set(Calendar.MINUTE, selectedMinute);
-                            calender1.set(Calendar.SECOND, 0);
-                            changeAlarm = true;
-                        }
-                    }, hour, minute, false);
-
-                    timePickerDialog.show();
                     if(hasFocus) {
-                        tripTime.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+
                                 TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
                                     @Override
                                     public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
@@ -162,29 +147,14 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                                         changeAlarm = true;
                                     }
                                 }, hour, minute, false);
-                            }
-                        });
-                    }
+                                 }
                      }
             });
             tripDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                            trip.setDate(new TripDate(day, month, year));
-                            tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
-                            calender.set(Calendar.YEAR, year);
-                            calender.set(Calendar.MONTH, month);
-                            calender.set(Calendar.DAY_OF_MONTH, day);
-                        }
-                    }, year, month, day);
-                    datePickerDialog.show();
                     if(hasFocus) {
-                        tripDate.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+
                                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                                     @Override
                                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -197,9 +167,6 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                                 }, year, month, day);
                                 datePickerDialog.show();
                             }
-                        });
-                    }
-
                 }
             });
             tripSource.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -211,42 +178,21 @@ public class TripFragment extends Fragment implements FirebaseReferences {
                                 .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
                                 .build(getActivity());
                         startActivityForResult(intent, REQUEST_CODE_START_AUTOCOMPLETE);
-                        tripSource.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new PlaceAutocomplete.IntentBuilder()
-                                        .accessToken(MAPBOX_ACCESS_TOKEN)
-                                        .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
-                                        .build(getActivity());
-                                startActivityForResult(intent, REQUEST_CODE_START_AUTOCOMPLETE);
-                            }
-                        });
-
-
                     }}
 
             });
             tripDest.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    Intent intent = new PlaceAutocomplete.IntentBuilder()
-                            .accessToken(MAPBOX_ACCESS_TOKEN)
-                            .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
-                            .build(getActivity());
-                    startActivityForResult(intent, REQUEST_CODE_END_AUTOCOMPLETE);
                     if(hasFocus) {
-                        tripDest.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+
                                 Intent intent = new PlaceAutocomplete.IntentBuilder()
                                         .accessToken(MAPBOX_ACCESS_TOKEN)
                                         .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
                                         .build(getActivity());
                                 startActivityForResult(intent, REQUEST_CODE_END_AUTOCOMPLETE);
                             }
-                        });
-
-                    } }
+                }
             });
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override

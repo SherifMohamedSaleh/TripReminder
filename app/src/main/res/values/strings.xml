@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Trip</string>
+    <string name="app_name">Tripminder</string>
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
     <string name="facebook_app_id">827080291160952</string>
     <string name="fb_login_protocol_scheme">fb827080291160952</string>
@@ -48,10 +48,13 @@
     <string name="go_to_home_screen">Go to home screen</string>
     <string name="no_notes_were_added">No Notes were added</string>
     <string name="no_trips_yet">No trips yet</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
     <string name="tripName">Trip Name</string>
     <string name="tripDate">Trip date</string>
     <string name="trip_date">Date</string>
     <string name="trip_time">Time</string>
+
 </resources>
 
 

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -21,6 +22,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -59,9 +62,10 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
     private static final int REQUEST_CODE_END_AUTOCOMPLETE = 2;
 
     TextInputEditText tripNameEditText;
-    ImageButton timeButton, dateButton, addNoteButton, addStartButton, addEndButton;
+    ImageButton addNoteButton;
+    ConstraintLayout addStartLayout, addEndLayout, timeLayout, dateLayout;
     RecyclerView notesRecyclerView;
-    TextView startPointTextView, endPointTextView;
+    TextView startPointTextView, endPointTextView, dateTextView, timeTextView;
     Switch isRoundedSwitch;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -81,16 +85,20 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
         View rootView = inflater.inflate(R.layout.fragment_add_trip, container, false);
 
         tripNameEditText = rootView.findViewById(R.id.et_trip_name);
-        timeButton = rootView.findViewById(R.id.btn_trip_time);
-        dateButton = rootView.findViewById(R.id.btn_trip_date);
+        timeLayout = rootView.findViewById(R.id.layout_time);
+        dateLayout = rootView.findViewById(R.id.layout_date);
         addNoteButton = rootView.findViewById(R.id.btn_add_note);
-        addStartButton = rootView.findViewById(R.id.btn_start_point);
-        addEndButton = rootView.findViewById(R.id.btn_end_point);
+        addStartLayout = rootView.findViewById(R.id.layout_start_point);
+        addEndLayout = rootView.findViewById(R.id.layout_end_point);
         notesRecyclerView = rootView.findViewById(R.id.rv_notes);
         startPointTextView = rootView.findViewById(R.id.tv_start_point);
         endPointTextView = rootView.findViewById(R.id.tv_end_point);
+        timeTextView = rootView.findViewById(R.id.tv_time);
+        dateTextView = rootView.findViewById(R.id.tv_date);
+
         isRoundedSwitch = rootView.findViewById(R.id.switch_rounded_trip);
         doneButton = rootView.findViewById(R.id.btn_done);
+
 
         notesArrayList = new ArrayList<>();
         addNotesAdapter = new AddNotesAdapter(notesArrayList, getContext());
@@ -99,8 +107,9 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
         notesRecyclerView.setAdapter(addNotesAdapter);
         notesRecyclerView.setLayoutManager(linearLayoutManager);
 
-        trip = new Trip();
+        Animation shake = (Animation) AnimationUtils.loadAnimation(getContext(), R.anim.shake);
 
+        trip = new Trip();
 
         calender = Calendar.getInstance();
         final int hour = calender.get(Calendar.HOUR_OF_DAY);
@@ -109,7 +118,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
         final int month = calender.get(Calendar.MONTH);
         final int day = calender.get(Calendar.DAY_OF_MONTH);
 
-        timeButton.setOnClickListener(new View.OnClickListener() {
+        timeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
@@ -120,8 +129,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
                         calender.set(Calendar.HOUR_OF_DAY, selectedHours);
                         calender.set(Calendar.MINUTE, selectedMinute);
                         calender.set(Calendar.SECOND, 0);
-
-                        Log.i(TAG, " calender1 hours: " + selectedHours + " minutes: " + selectedMinute);
+                        timeTextView.setText(selectedHours + ":" + selectedMinute);
                     }
 
                 }, hour, minute, false);
@@ -131,7 +139,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
             }
         });
 
-        dateButton.setOnClickListener(new View.OnClickListener() {
+        dateLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -146,6 +154,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
                         calender.set(Calendar.YEAR, year);
                         calender.set(Calendar.MONTH, month);
                         calender.set(Calendar.DAY_OF_MONTH, day);
+                        dateTextView.setText(day + "/" + (month + 1) + "/" + year);
 
                     }
                 }, year, month, day);
@@ -163,7 +172,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
             }
         });
 
-        addStartButton.setOnClickListener(new View.OnClickListener() {
+        addStartLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new PlaceAutocomplete.IntentBuilder()
@@ -174,7 +183,7 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
             }
         });
 
-        addEndButton.setOnClickListener(new View.OnClickListener() {
+        addEndLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new PlaceAutocomplete.IntentBuilder()
@@ -222,23 +231,29 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
                                     });
                                 } else {
                                     //if end point is not set
-                                    Toast.makeText(getActivity(), "End point cannot be empty", Toast.LENGTH_SHORT).show();
+                                    endPointTextView.setError("Required field");
+                                    addEndLayout.startAnimation(shake);
                                 }
                             } else {
                                 //if start point is not set
-                                Toast.makeText(getActivity(), "Start point cannot be empty", Toast.LENGTH_SHORT).show();
+                                startPointTextView.setError("Required field");
+                                addStartLayout.startAnimation(shake);
                             }
                         } else {
                             //if time is not set
-                            Toast.makeText(getActivity(), "Time cannot be empty", Toast.LENGTH_SHORT).show();
+                            timeTextView.setError("Required field");
+                            timeLayout.startAnimation(shake);
                         }
                     } else {
                         //if date is not set
-                        Toast.makeText(getActivity(), "Date cannot be empty", Toast.LENGTH_SHORT).show();
+                        dateTextView.setError("Required field");
+                        dateLayout.startAnimation(shake);
                     }
                 } else {
                     // if name is empty
-                    Toast.makeText(getActivity(), "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    tripNameEditText.setError("Required field");
+                    tripNameEditText.startAnimation(shake);
+                    tripNameEditText.requestFocus();
                 }
 
             }
