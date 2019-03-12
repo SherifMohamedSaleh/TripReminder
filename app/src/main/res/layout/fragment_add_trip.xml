@@ -192,7 +192,7 @@
                     android:id="@+id/btn_add_note"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_input_add"
+                    app:srcCompat="@drawable/ic_plus1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

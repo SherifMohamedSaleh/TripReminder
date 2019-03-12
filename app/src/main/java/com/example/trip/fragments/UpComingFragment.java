@@ -77,7 +77,7 @@ public class UpComingFragment extends Fragment implements FirebaseReferences {
   //                      Log.i("firebase id", firebaseUser.getUid());
 //                        Log.i("trip firebase id", trip.getUserId());
                         if (trip != null && trip.getUserId().equals(firebaseUser.getUid())) {
-                            if (trip.getStatus().equals("u")) {
+                            if (!trip.getStatus().equals("d")) {
                                 tripDataList.add(trip);
                                 adapter.notifyDataSetChanged();
                             }

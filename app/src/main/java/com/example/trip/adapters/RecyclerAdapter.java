@@ -68,16 +68,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
             holder.pastImageView.setVisibility(View.VISIBLE);
             holder.upcomingImageView.setVisibility(View.INVISIBLE);
             holder.startTripButton.setVisibility(View.INVISIBLE);
-          //  LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-         //   lp.setMargins(200, 0, 0, 0);
-           // holder.speedImage.setLayoutParams(lp);
-            //lp.setMargins(0, 0, 0, 0);
-            //holder.startTripButton.setLayoutParams(lp);
             holder.speedText.setVisibility(View.VISIBLE);
             holder.speedImage.setVisibility(View.VISIBLE);
-            holder.speedText.setText(" "+Float.toString(tripData.getSpeedSum())+" km/h");
+            if(tripData.getSpeedsCount()==0)
+                holder.speedText.setText(" "+Float.toString(tripData.getSpeedSum())+" km/h");
+            else
+                holder.speedText.setText(" "+Float.toString(tripData.getSpeedSum()/tripData.getSpeedsCount())+" km/h");
         }
-        //   holder.textFive.setText(tripData.getTripType()+"");
+        if(tripData.isRoundedTrip()&&tripData.getStatus().equals("h"))
+        {
+            holder.resumeTripButton.setVisibility(View.VISIBLE);
+            holder.startTripButton.setVisibility(View.INVISIBLE);
+
+        }
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +102,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
                 RoutingFragment fragment = new RoutingFragment();
                 fragment.setArguments(bundle);
                 FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.fMain, fragment);
+                ft.commit();
+            }
+        });
+        holder.resumeTripButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("trip", tripData);
+                RoutingFragment fragment = new RoutingFragment();
+                fragment.setArguments(bundle);
+                FragmentTransaction ft =((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
                 ft.addToBackStack(null);
                 ft.replace(R.id.fMain, fragment);
                 ft.commit();
@@ -158,7 +174,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
 
         TextView textOne, textTwo,speedText;
         CardView cardView;
-        ImageButton startTripButton;
+        ImageButton startTripButton,resumeTripButton;
         ImageButton deleteTrip;
         ImageView speedImage;
         ImageView upcomingImageView,pastImageView;
@@ -176,6 +192,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Produc
             startTripButton = itemView.findViewById(R.id.btn_start_trip);
             deleteTrip = itemView.findViewById(R.id.deleteTripBtn);
             pastImageView=itemView.findViewById(R.id.pastImageView);
+            resumeTripButton=itemView.findViewById(R.id.resumeRoundBtn);
             upcomingImageView.setElevation(10);
             pastImageView.setElevation(10);
             cardView.setElevation(5);

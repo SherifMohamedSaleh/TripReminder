@@ -9,35 +9,46 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.trip.R;
+import com.example.trip.adapters.AddNotesAdapter;
+import com.example.trip.models.Note;
 import com.example.trip.models.Trip;
 import com.example.trip.models.TripDate;
 import com.example.trip.models.TripLocation;
 import com.example.trip.models.TripTime;
 import com.example.trip.utils.AlertReceiver;
 import com.example.trip.utils.FirebaseReferences;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import static com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions.MODE_CARDS;
@@ -56,17 +67,18 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     private static final String MAPBOX_ACCESS_TOKEN = "sk.eyJ1IjoidG9rYWFsaWFtaW4iLCJhIjoiY2pzODBzcjlrMTJ4azN5bnV6a3E2cTJiaSJ9.jWdMw48rKqQ9t-cd8J0KBA";
     private static final int REQUEST_CODE_START_AUTOCOMPLETE = 1;
     private static final int REQUEST_CODE_END_AUTOCOMPLETE = 2;
+    ArrayList<Note> notesArrayList;
+    AddNotesAdapter addNotesAdapter;
+    RecyclerView notesRecyclerView;
+    LinearLayoutManager linearLayoutManager;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-
     EditText tripName, tripDate, tripTime, tripSource, tripDest;
-    FloatingActionButton editTrip, saveTrip;
+    FloatingActionButton saveTrip;
     Button notesBtn, roundedBtn;
+    ImageButton addNote;
     TextView tripStatus;
     CheckBox doneCheckBox;
-    ImageView tripImage;
-    Boolean editMode = false;
-    Drawable draw;
     Trip trip;
 
     public TripFragment() {
@@ -85,11 +97,17 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         tripSource = view.findViewById(R.id.tripSourceVal);
         tripDest = view.findViewById(R.id.tripDestVal);
         doneCheckBox = view.findViewById(R.id.doneCheckBox);
-        notesBtn = view.findViewById(R.id.notesBtn);
         roundedBtn = view.findViewById(R.id.resumeRoundBtn);
-        editTrip = view.findViewById(R.id.editTripBtn);
         saveTrip = view.findViewById(R.id.saveTripBtn);
-        draw = tripName.getBackground();
+        notesArrayList = trip.getNotes();
+        notesRecyclerView = view.findViewById(R.id.rv_notes);
+        addNotesAdapter = new AddNotesAdapter(notesArrayList, getContext());
+        addNote = view.findViewById(R.id.addNoteBtn);
+        //   saveNotes = view.findViewById(R.id.saveTrip);
+        linearLayoutManager = new LinearLayoutManager(getContext());
+        notesRecyclerView.setAdapter(addNotesAdapter);
+        notesRecyclerView.setLayoutManager(linearLayoutManager);
+        doneCheckBox.setClickable(false);
         tripName.setText(trip.getTripName());
 
         if (trip.getStatus().equals("d")) {
@@ -106,189 +124,186 @@ public class TripFragment extends Fragment implements FirebaseReferences {
             doneCheckBox.setChecked(false);
         }
 
-        if (trip.isRoundedTrip() && trip.getStatus().equals("h")) {
-            roundedBtn.setVisibility(View.VISIBLE);
-        }
+
         tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
         tripTime.setText(Integer.toString(trip.getTime().getHour()) + ":" + Integer.toString(trip.getTime().getMinute()));
         tripSource.setText("• " + trip.getStartPoint().getAddress());
         tripDest.setText("• " + trip.getEndPoint().getAddress());
 
-        editTrip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editMode = true;
-                saveTrip.show();
-                editTrip.hide();
-                tripName.setFocusable(true);
-                tripName.setClickable(true);
-                tripName.setFocusableInTouchMode(true);
-                tripName.setBackgroundDrawable(draw);
-                tripDate.setFocusable(true);
-                tripDate.setClickable(true);
-                tripDate.setFocusableInTouchMode(true);
-                tripDate.setBackgroundDrawable(draw);
-                tripTime.setFocusable(true);
-                tripTime.setClickable(true);
-                tripTime.setFocusableInTouchMode(true);
-                tripTime.setBackgroundDrawable(draw);
-                tripSource.setFocusable(true);
-                tripSource.setClickable(true);
-                tripSource.setFocusableInTouchMode(true);
-                tripSource.setBackgroundDrawable(draw);
-                tripDest.setClickable(true);
-                tripDest.setFocusable(true);
-                tripDest.setFocusableInTouchMode(true);
-                tripDest.setBackgroundDrawable(draw);
-            }
-        });
-        if (editMode) {
-            tripTime.setOnClickListener(new View.OnClickListener() {
+
+            tripTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public void onClick(View view) {
+                public void onFocusChange(View v, boolean hasFocus) {
                     TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
                             trip.setTime(new TripTime(selectedHours, selectedMinute));
-                            //   tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
-
+                            tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
                             calender1.set(Calendar.HOUR_OF_DAY, selectedHours);
                             calender1.set(Calendar.MINUTE, selectedMinute);
                             calender1.set(Calendar.SECOND, 0);
                             changeAlarm = true;
-
-
                         }
-
                     }, hour, minute, false);
 
                     timePickerDialog.show();
-                }
+                    if(hasFocus) {
+                        tripTime.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker timePicker, int selectedHours, int selectedMinute) {
+                                        trip.setTime(new TripTime(selectedHours, selectedMinute));
+                                        tripTime.setText(Integer.toString(trip.getTime().getHour())+":"+Integer.toString(trip.getTime().getMinute()));
+                                        calender1.set(Calendar.HOUR_OF_DAY, selectedHours);
+                                        calender1.set(Calendar.MINUTE, selectedMinute);
+                                        calender1.set(Calendar.SECOND, 0);
+                                        changeAlarm = true;
+                                    }
+                                }, hour, minute, false);
+                            }
+                        });
+                    }
+                     }
             });
-            tripDate.setOnClickListener(new View.OnClickListener() {
+            tripDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public void onClick(View view) {
+                public void onFocusChange(View v, boolean hasFocus) {
                     DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                             trip.setDate(new TripDate(day, month, year));
+                            tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
                             calender.set(Calendar.YEAR, year);
                             calender.set(Calendar.MONTH, month);
                             calender.set(Calendar.DAY_OF_MONTH, day);
                         }
-
                     }, year, month, day);
-
                     datePickerDialog.show();
+                    if(hasFocus) {
+                        tripDate.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                                    @Override
+                                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                        trip.setDate(new TripDate(day, month, year));
+                                        tripDate.setText(Integer.toString(trip.getDate().getDay()) + "/" + Integer.toString(trip.getDate().getMonth()) + "/" + Integer.toString(trip.getDate().getYear()));
+                                        calender.set(Calendar.YEAR, year);
+                                        calender.set(Calendar.MONTH, month);
+                                        calender.set(Calendar.DAY_OF_MONTH, day);
+                                    }
+                                }, year, month, day);
+                                datePickerDialog.show();
+                            }
+                        });
+                    }
+
                 }
             });
-            tripSource.setOnClickListener(new View.OnClickListener() {
+            tripSource.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public void onClick(View view) {
-                    Intent intent = new PlaceAutocomplete.IntentBuilder()
-                            .accessToken(MAPBOX_ACCESS_TOKEN)
-                            .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
-                            .build(getActivity());
-                    startActivityForResult(intent, REQUEST_CODE_START_AUTOCOMPLETE);
-                }
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus) {
+                        Intent intent = new PlaceAutocomplete.IntentBuilder()
+                                .accessToken(MAPBOX_ACCESS_TOKEN)
+                                .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
+                                .build(getActivity());
+                        startActivityForResult(intent, REQUEST_CODE_START_AUTOCOMPLETE);
+                        tripSource.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new PlaceAutocomplete.IntentBuilder()
+                                        .accessToken(MAPBOX_ACCESS_TOKEN)
+                                        .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
+                                        .build(getActivity());
+                                startActivityForResult(intent, REQUEST_CODE_START_AUTOCOMPLETE);
+                            }
+                        });
+
+
+                    }}
+
             });
-            tripDest.setOnClickListener(new View.OnClickListener() {
+            tripDest.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public void onClick(View view) {
+                public void onFocusChange(View v, boolean hasFocus) {
                     Intent intent = new PlaceAutocomplete.IntentBuilder()
                             .accessToken(MAPBOX_ACCESS_TOKEN)
                             .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
                             .build(getActivity());
                     startActivityForResult(intent, REQUEST_CODE_END_AUTOCOMPLETE);
-                }
+                    if(hasFocus) {
+                        tripDest.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new PlaceAutocomplete.IntentBuilder()
+                                        .accessToken(MAPBOX_ACCESS_TOKEN)
+                                        .placeOptions(PlaceOptions.builder().build(MODE_CARDS))
+                                        .build(getActivity());
+                                startActivityForResult(intent, REQUEST_CODE_END_AUTOCOMPLETE);
+                            }
+                        });
+
+                    } }
             });
-        } else {
-            tripName.setFocusable(false);
-            tripName.setClickable(false);
-            tripName.setFocusableInTouchMode(false);
-            tripName.setBackground(null);
-            tripDate.setFocusable(false);
-            tripDate.setClickable(false);
-            tripDate.setBackground(null);
-            tripDate.setFocusableInTouchMode(false);
-            tripTime.setFocusable(false);
-            tripTime.setClickable(false);
-            tripTime.setBackground(null);
-            tripTime.setFocusableInTouchMode(false);
-            tripSource.setFocusable(false);
-            tripSource.setFocusable(false);
-            tripSource.setBackground(null);
-            tripSource.setFocusableInTouchMode(false);
-            tripDest.setClickable(false);
-            tripDest.setFocusable(false);
-            tripDest.setFocusableInTouchMode(false);
-            tripDest.setBackground(null);
-            doneCheckBox.setFocusable(false);
-            doneCheckBox.setClickable(false);
-        }
+        addNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notesArrayList.add(new Note("", false));
+                addNotesAdapter.notifyDataSetChanged();
+            }
+        });
         saveTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editMode = false;
-
-                saveTrip.hide();
-                editTrip.show();
-                tripName.setFocusable(false);
-                tripName.setClickable(false);
-                tripName.setFocusableInTouchMode(false);
-                tripName.setBackground(null);
-                tripDate.setFocusable(false);
-                tripDate.setClickable(false);
-                tripDate.setBackground(null);
-                tripDate.setFocusableInTouchMode(false);
-                tripTime.setFocusable(false);
-                tripTime.setClickable(false);
-                tripTime.setFocusableInTouchMode(false);
-                tripTime.setBackground(null);
-                tripSource.setFocusable(false);
-                tripSource.setFocusable(false);
-                tripSource.setFocusableInTouchMode(false);
-                tripSource.setBackground(null);
-                tripDest.setClickable(false);
-                tripDest.setFocusable(false);
-                tripDest.setFocusableInTouchMode(false);
-                tripDest.setBackground(null);
-                doneCheckBox.setFocusable(false);
-                doneCheckBox.setClickable(false);
-                //   cancelAlarm();
-                if(changeAlarm == true) {
-                    startAlarm(calender1);
-                }//   trip.setTripRequestId(id);
-                trip.setTripName(tripName.getText().toString());
-
-                tripsRef.child(firebaseUser.getUid()).child(trip.getId()).setValue(trip);
-            }
-        });
-        notesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NoteFragment noteFragment = new NoteFragment();
-                noteFragment.setTrip(trip);
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.addToBackStack(null);
-                ft.replace(R.id.fMain, noteFragment, "tripFragmentTag");
-                ft.commit();
-            }
-        });
-
-        roundedBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("trip", trip);
-                RoutingFragment fragment = new RoutingFragment();
-                fragment.setArguments(bundle);
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.addToBackStack(null);
-                ft.replace(R.id.fMain, fragment);
-                ft.commit();
+                if (!isEmpty(tripName)) {
+                    if (!isEmpty(tripDate)) {
+                        if (!isEmpty(tripTime)) {
+                            if (!isEmpty(tripSource)) {
+                                if (!isEmpty(tripDest)) {
+                                    if (addNotesAdapter.getNotesArrayList() != null)
+                                       trip.setNotes(addNotesAdapter.getNotesArrayList());
+                                    if(changeAlarm == true) {
+                                        startAlarm(calender1);
+                                    }
+                                    trip.setTripName(tripName.getText().toString());
+                                    tripsRef.child(firebaseUser.getUid()).child(trip.getId()).setValue(trip).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(getActivity(), "Trip saved", Toast.LENGTH_SHORT).show();
+                                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                            ft.replace(R.id.fMain, new UpComingFragment());
+                                            ft.addToBackStack(null);
+                                            ft.commit();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getActivity(), "Failed to save trip", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
+                                    //if end point is not set
+                                    Toast.makeText(getActivity(), "End point cannot be empty", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                //if start point is not set
+                                Toast.makeText(getActivity(), "Start point cannot be empty", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            //if time is not set
+                            Toast.makeText(getActivity(), "Time cannot be empty", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        //if date is not set
+                        Toast.makeText(getActivity(), "Date cannot be empty", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // if name is empty
+                    Toast.makeText(getActivity(), "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -297,7 +312,6 @@ public class TripFragment extends Fragment implements FirebaseReferences {
     }
 
     private void startAlarm(Calendar calendar) {
-
 
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
         int x = trip.getTripRequestId();//(int)calendar.getTimeInMillis();
@@ -325,16 +339,18 @@ public class TripFragment extends Fragment implements FirebaseReferences {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_START_AUTOCOMPLETE) {
             CarmenFeature feature = PlaceAutocomplete.getPlace(data);
-            tripSource.setText(feature.text());
+            tripSource.setText("• " + feature.text());
             trip.setStartPoint(new TripLocation(feature.center().latitude(), feature.center().longitude(), feature.text()));
         } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_END_AUTOCOMPLETE) {
             CarmenFeature feature = PlaceAutocomplete.getPlace(data);
-            tripDest.setText(feature.text());
+            tripDest.setText("• " + feature.text());
             trip.setEndPoint(new TripLocation(feature.center().latitude(), feature.center().longitude(), feature.text()));
         }
     }
-
     public void setTrip(Trip trip) {
         this.trip = trip;
+    }
+    private boolean isEmpty(EditText editText) {
+        return editText.getText().toString().length() <= 0 || editText.getText() == null;
     }
 }

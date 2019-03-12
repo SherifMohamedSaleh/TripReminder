@@ -7,26 +7,41 @@
     tools:context=".fragments.TripFragment">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.8"
+        android:textAlignment="center"
+        android:weightSum="2"/>
+
+    <LinearLayout
         android:id="@+id/ftrip"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="6">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="4dp"
             android:layout_weight="0.6"
             android:textAlignment="center"
             android:weightSum="2">
 
-            <EditText
-                android:id="@+id/tripNameVal"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textPersonName" />
+                android:layout_weight="1">
+
+                <EditText
+                    android:id="@+id/tripNameVal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="10"
+                    android:hint="@string/trip_name"
+                    android:inputType="textPersonName" />
+            </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:id="@+id/tripStatusVal"
@@ -34,35 +49,46 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
-                android:gravity="fill_vertical"
-                android:textColor="@color/browser_actions_title_color" />
+                android:gravity="fill_vertical" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.6"
             android:weightSum="3">
 
-            <EditText
-                android:id="@+id/tripDateVal"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="date"
-                android:textSize="5pt"
-                android:textStyle="bold" />
+                android:layout_weight="1">
 
-            <EditText
-                android:id="@+id/tripTimeVal"
+                <EditText
+                    android:id="@+id/tripDateVal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="@string/trip_date"
+                    android:inputType="date"
+                     />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="time"
-                android:textSize="5pt"
-                android:textStyle="bold" />
+                android:layout_weight="1">
+
+                <EditText
+                    android:id="@+id/tripTimeVal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="@string/trip_time"
+                    android:inputType="time"
+                     />
+            </android.support.design.widget.TextInputLayout>
 
             <CheckBox
                 android:id="@+id/doneCheckBox"
@@ -74,64 +100,86 @@
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/tripSourceVal"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/tripDestVal"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            android:layout_weight="0.7">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.8"
-            android:textAlignment="center"
-            android:weightSum="2">
-
-            <Button
-                android:id="@+id/notesBtn"
-                android:layout_width="0dp"
+            <EditText
+                android:id="@+id/tripSourceVal"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/notes" />
+                android:ems="10"
+                android:hint="@string/start_point"
+                android:inputType="textPersonName" />
+        </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/resumeRoundBtn"
-                android:layout_width="0dp"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7">
+
+            <EditText
+                android:id="@+id/tripDestVal"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/roundtrip"
-                android:visibility="invisible" />
-        </LinearLayout>
+                android:layout_weight="0.6"
+                android:ems="10"
+                android:hint="@string/end_point"
+                android:inputType="textPersonName" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2.5"
+          >
+
+            <TextView
+                android:id="@+id/tv_trip_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/tripNotes"
+                app:layout_constraintBottom_toBottomOf="@+id/addNoteBtn"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageButton
+                android:id="@+id/addNoteBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="#00000000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_plus1" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_notes"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/addNoteBtn" />
+
+        </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/editTripBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_weight="1"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/saveTripBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
+        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:layout_weight="1"
-        android:visibility="invisible"
         app:srcCompat="@android:drawable/ic_menu_save" />
 
 </android.support.design.widget.CoordinatorLayout>

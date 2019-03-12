@@ -44,7 +44,6 @@ public class AddNotesAdapter extends RecyclerView.Adapter<AddNotesAdapter.ViewHo
         Log.i(TAG, "onBindViewHolder " + notesArrayList.toString());
         if (notesArrayList.get(i).getName().length() > 0)
             holder.noteEditText.setText(notesArrayList.get(i).getName());
-
     }
 
     public ArrayList<Note> getNotesArrayList() {
@@ -74,6 +73,7 @@ public class AddNotesAdapter extends RecyclerView.Adapter<AddNotesAdapter.ViewHo
                         notesArrayList.remove(position);
                         Log.i(TAG, "after remove " + notesArrayList.toString());
                         notifyItemRemoved(position);
+                        noteEditText.setText("");
                     } catch (ArrayIndexOutOfBoundsException e) {
                         e.printStackTrace();
                     }

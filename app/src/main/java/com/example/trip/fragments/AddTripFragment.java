@@ -197,7 +197,6 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
                                         trip.setNotes(addNotesAdapter.getNotesArrayList());
 
                                     trip.setTripName(tripNameEditText.getText().toString());
-
                                     trip.setRoundedTrip(isRoundedSwitch.isChecked());
                                     trip.setUserId(firebaseUser.getUid());
                                     String key = tripsRef.child(firebaseUser.getUid()).push().getKey();
