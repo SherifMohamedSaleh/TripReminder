@@ -11,7 +11,7 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="trip_name">Name</string>
     <string name="next">next</string>
-    <string name="title_activity_home_navigation">HomeNavigationActivity</string>
+    <string name="title_activity_home_navigation">Tripminder</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -48,6 +48,8 @@
     <string name="go_to_home_screen">Go to home screen</string>
     <string name="no_notes_were_added">No Notes were added</string>
     <string name="no_trips_yet">No trips yet</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
 </resources>
 
 
