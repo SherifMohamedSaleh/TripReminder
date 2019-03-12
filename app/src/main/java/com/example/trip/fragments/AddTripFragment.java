@@ -22,6 +22,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -105,8 +107,9 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
         notesRecyclerView.setAdapter(addNotesAdapter);
         notesRecyclerView.setLayoutManager(linearLayoutManager);
 
-        trip = new Trip();
+        Animation shake = (Animation) AnimationUtils.loadAnimation(getContext(), R.anim.shake);
 
+        trip = new Trip();
 
         calender = Calendar.getInstance();
         final int hour = calender.get(Calendar.HOUR_OF_DAY);
@@ -229,23 +232,29 @@ public class AddTripFragment extends Fragment implements FirebaseReferences /*,T
                                     });
                                 } else {
                                     //if end point is not set
-                                    Toast.makeText(getActivity(), "End point cannot be empty", Toast.LENGTH_SHORT).show();
+                                    endPointTextView.setError("Required field");
+                                    addEndLayout.startAnimation(shake);
                                 }
                             } else {
                                 //if start point is not set
-                                Toast.makeText(getActivity(), "Start point cannot be empty", Toast.LENGTH_SHORT).show();
+                                startPointTextView.setError("Required field");
+                                addStartLayout.startAnimation(shake);
                             }
                         } else {
                             //if time is not set
-                            Toast.makeText(getActivity(), "Time cannot be empty", Toast.LENGTH_SHORT).show();
+                            timeTextView.setError("Required field");
+                            timeLayout.startAnimation(shake);
                         }
                     } else {
                         //if date is not set
-                        Toast.makeText(getActivity(), "Date cannot be empty", Toast.LENGTH_SHORT).show();
+                        dateTextView.setError("Required field");
+                        dateLayout.startAnimation(shake);
                     }
                 } else {
                     // if name is empty
-                    Toast.makeText(getActivity(), "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                    tripNameEditText.setError("Required field");
+                    tripNameEditText.startAnimation(shake);
+                    tripNameEditText.requestFocus();
                 }
 
             }

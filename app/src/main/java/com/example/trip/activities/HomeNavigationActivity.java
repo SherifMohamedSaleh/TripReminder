@@ -10,8 +10,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.trip.R;
 import com.example.trip.fragments.PastTripsFragment;
@@ -20,6 +21,7 @@ import com.example.trip.fragments.UpComingFragment;
 import com.example.trip.models.Trip;
 import com.example.trip.utils.FirebaseReferences;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class HomeNavigationActivity extends AppCompatActivity
@@ -62,6 +64,13 @@ public class HomeNavigationActivity extends AppCompatActivity
         } else {
             ft.replace(R.id.fMain, new UpComingFragment());
             ft.commit();
+        }
+
+        View headerView = navigationView.getHeaderView(0);
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            TextView emailTextView = headerView.findViewById(R.id.tv_email);
+            emailTextView.setText(currentUser.getEmail());
         }
 
         navigationView.setCheckedItem(R.id.nav_home);
