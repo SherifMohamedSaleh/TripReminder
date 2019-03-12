@@ -3,10 +3,11 @@
     <item>
 
         <shape android:shape="rectangle">
+
             <stroke
                 android:width="2dp"
                 android:color="@color/colorAccent" />
-            <solid android:color="@color/fui_transparent" />
+            <solid android:color="#ffffff" />
             <corners android:radius="35dp" />
         </shape>
     </item>
