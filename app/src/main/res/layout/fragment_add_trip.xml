@@ -285,7 +285,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/trip_notes"
                     app:layout_constraintBottom_toBottomOf="@+id/btn_add_note"
-                    android:background="#00000000"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/btn_add_note" />
 
@@ -294,6 +293,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/ic_plus1"
+                    android:background="#00000000"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
