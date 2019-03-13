@@ -271,11 +271,11 @@ public class RoutingFragment extends Fragment implements OnNavigationReadyCallba
                     .getRoute(new Callback<DirectionsResponse>() {
                         @Override
                         public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                            if (response.body() != null && response.body().routes().size() > 0) {
+                            if (response.body() != null && response.body().routes().size() > 0 && response.body().routes().get(0).distance() != 0) {
                                 directionsRoute = response.body().routes().get(0);
                                 startNavigation();
                             } else {
-                                Snackbar.make(rootView, "Couldn't find route", Snackbar.LENGTH_INDEFINITE).show();
+                                Snackbar.make(rootView, "Couldn't find route", Snackbar.LENGTH_SHORT).show();
                             }
                         }
 
